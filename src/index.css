@@ -18,3 +18,8 @@ body {
   background-color: var(--background);
   color: var(--dark);
 }
+
+html, body {
+  height: 100%;
+  overflow-x: hidden;
+}
