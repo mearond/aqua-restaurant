@@ -1,0 +1,49 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 60px;
+  background-color: var(--dark);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.navbar-logo a {
+  color: var(--secondary);
+  text-decoration: none;
+  font-size: 1.8rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.navbar-links a {
+  color: var(--white);
+  text-decoration: none;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  transition: color 0.2s;
+}
+
+.navbar-links a:hover {
+  color: var(--secondary);
+}
+
+.btn-login {
+  background-color: var(--accent);
+  color: var(--white) !important;
+  padding: 8px 22px;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+.btn-login:hover {
+  opacity: 0.85;
+  color: var(--white);
+}

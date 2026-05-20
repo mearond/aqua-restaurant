@@ -1,25 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+
+import Home from './Pages/public/Home'
+import Menu from './Pages/public/Menu'
+import About from './Pages/public/About'
+import Contact from './Pages/public/Contact'
+import Login from './Pages/public/Login'
+
+import CustomerDashboard from './Pages/customer/Dashboard'
+import Reservations from './Pages/customer/Reservations'
+import Orders from './Pages/customer/Orders'
+
+import AdminDashboard from './Pages/admin/Dashboard'
+import ManageMenu from './Pages/admin/ManageMenu'
+import ManageOrders from './Pages/admin/ManageOrders'
+import ManageReservations from './Pages/admin/ManageReservations'
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <BrowserRouter>
+      <Routes>
+        {/* Public */}
+        <Route path="/" element={<Home />} />
+        <Route path="/menu" element={<Menu />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/login" element={<Login />} />
+
+        {/* Customer */}
+        <Route path="/dashboard" element={<CustomerDashboard />} />
+        <Route path="/reservations" element={<Reservations />} />
+        <Route path="/orders" element={<Orders />} />
+
+        {/* Admin */}
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/admin/menu" element={<ManageMenu />} />
+        <Route path="/admin/orders" element={<ManageOrders />} />
+        <Route path="/admin/reservations" element={<ManageReservations />} />
+      </Routes>
+    </BrowserRouter>
+  )
 }
 
-export default App;
+export default App
