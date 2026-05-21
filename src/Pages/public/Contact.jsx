@@ -1,9 +1,48 @@
 import Navbar from '../../components/Navbar'
 import { useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 
 function Contact() {
-  // useNavigate lets us redirect the user to another page
   const navigate = useNavigate()
+
+  // Track all form field values
+  const [formData, setFormData] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+    date: '',
+    guests: '',
+  })
+
+  // Track whether user tried to submit with empty fields
+  const [attempted, setAttempted] = useState(false)
+
+  // Update formData when any field changes
+  const handleChange = (key, value) => {
+    setFormData(prev => ({ ...prev, [key]: value }))
+  }
+
+  // Check if every field has a value
+  const isFormComplete = Object.values(formData).every(val => val.trim() !== '')
+
+  const handleSubmit = () => {
+    // If form is incomplete, show errors and don't redirect
+    if (!isFormComplete) {
+      setAttempted(true)
+      return
+    }
+    // If complete, redirect to login/signup
+    navigate('/login')
+  }
+
+  // Each field now has a key to track its value
+  const fields = [
+    { label: 'Full Name', type: 'text', placeholder: 'John Doe', key: 'fullName' },
+    { label: 'Email', type: 'email', placeholder: 'you@email.com', key: 'email' },
+    { label: 'Phone', type: 'tel', placeholder: '+251 9XX XXX XXX', key: 'phone' },
+    { label: 'Date', type: 'date', placeholder: '', key: 'date' },
+    { label: 'Number of Guests', type: 'number', placeholder: '2', key: 'guests' },
+  ]
 
   return (
     <div style={{ backgroundColor: '#FAF8F3', paddingTop: '70px' }}>
@@ -61,13 +100,7 @@ function Contact() {
         }}>
           <h2 style={{ color: '#12344D', marginBottom: '24px', fontSize: '22px' }}>Make a Reservation</h2>
 
-          {[
-            { label: 'Full Name', type: 'text', placeholder: 'John Doe' },
-            { label: 'Email', type: 'email', placeholder: 'you@email.com' },
-            { label: 'Phone', type: 'tel', placeholder: '+251 9XX XXX XXX' },
-            { label: 'Date', type: 'date', placeholder: '' },
-            { label: 'Number of Guests', type: 'number', placeholder: '2' },
-          ].map(field => (
+          {fields.map(field => (
             <div key={field.label} style={{ marginBottom: '16px' }}>
               <label style={{ display: 'block', marginBottom: '6px', fontWeight: '500', color: '#12344D', fontSize: '14px' }}>
                 {field.label}
@@ -75,33 +108,45 @@ function Contact() {
               <input
                 type={field.type}
                 placeholder={field.placeholder}
+                value={formData[field.key]}
+                onChange={e => handleChange(field.key, e.target.value)}
                 style={{
                   width: '100%',
                   padding: '11px 16px',
                   borderRadius: '8px',
-                  border: '1.5px solid #e0ddd8',
+                  // Red border if attempted and field is empty, normal otherwise
+                  border: attempted && !formData[field.key].trim()
+                    ? '1.5px solid #FF7F6A'
+                    : '1.5px solid #e0ddd8',
                   fontSize: '15px',
                   outline: 'none',
                   boxSizing: 'border-box',
                 }}
               />
+              {/* Show error message under empty fields after attempt */}
+              {attempted && !formData[field.key].trim() && (
+                <p style={{ color: '#FF7F6A', fontSize: '12px', marginTop: '4px' }}>
+                  This field is required
+                </p>
+              )}
             </div>
           ))}
 
-          {/* On click, redirect user to login/signup page */}
           <button
-            onClick={() => navigate('/login')}
+            onClick={handleSubmit}
             style={{
               width: '100%',
               padding: '14px',
-              backgroundColor: '#FF7F6A',
+              // Button is darker when form is incomplete to hint it's not ready
+              backgroundColor: isFormComplete ? '#FF7F6A' : '#ffb5a9',
               color: '#fff',
               border: 'none',
               borderRadius: '8px',
               fontSize: '16px',
               fontWeight: '600',
-              cursor: 'pointer',
+              cursor: isFormComplete ? 'pointer' : 'not-allowed',
               marginTop: '8px',
+              transition: 'background-color 0.2s',
             }}>
             Book Table
           </button>
