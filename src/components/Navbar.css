@@ -1,35 +1,36 @@
 .navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 18px 60px;
   background-color: #12344D;
-  position: sticky;
+  padding: 0 40px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
   width: 100%;
   box-sizing: border-box;
 }
 
-.navbar-logo a {
+.navbar-logo {
   color: #27B7B7;
+  font-size: 24px;
+  font-weight: bold;
   text-decoration: none;
-  font-size: 1.8rem;
-  font-weight: 700;
   letter-spacing: 4px;
 }
 
 .navbar-links {
   display: flex;
-  align-items: center;
   gap: 32px;
 }
 
 .navbar-links a {
-  color: #ffffff;
+  color: #FAF8F3;
   text-decoration: none;
-  font-size: 0.95rem;
-  letter-spacing: 1px;
+  font-size: 15px;
   transition: color 0.2s;
 }
 
@@ -37,14 +38,38 @@
   color: #27B7B7;
 }
 
-.btn-login {
-  background-color: #FF7F6A;
-  color: #ffffff !important;
-  padding: 8px 22px;
-  border-radius: 20px;
-  font-weight: 600;
+.navbar-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
 }
 
-.btn-login:hover {
+.btn-outline {
+  color: #27B7B7;
+  border: 1px solid #27B7B7;
+  padding: 8px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.btn-outline:hover {
+  background-color: #27B7B7;
+  color: #12344D;
+}
+
+.btn-fill {
+  background-color: #FF7F6A;
+  color: #FAF8F3;
+  padding: 8px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: bold;
+  transition: opacity 0.2s;
+}
+
+.btn-fill:hover {
   opacity: 0.85;
 }

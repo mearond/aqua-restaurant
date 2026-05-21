@@ -33,17 +33,17 @@ function Menu() {
     ? Object.values(menuData).flat()
     : menuData[activeCategory]
 
-  return (
-    <div style={{ backgroundColor: '#FAF8F3', minHeight: '100vh' }}>
-      <Navbar />
+ return (
+  <div style={{ backgroundColor: '#FAF8F3', paddingTop: '70px' }}>
+    <Navbar />
 
-      {/* Page header */}
-      <div style={{
-        backgroundColor: '#12344D',
-        color: '#FAF8F3',
-        textAlign: 'center',
-        padding: '60px 40px',
-      }}>
+    {/* Page header */}
+    <div style={{
+      backgroundColor: '#12344D',
+      color: '#FAF8F3',
+      textAlign: 'center',
+      padding: '60px 40px',
+    }}>
         <h1 style={{ fontSize: '42px', color: '#27B7B7', marginBottom: '12px'}}>Our Menu</h1>
         <p style={{ opacity: 0.8, fontSize: '16px' }}>Fresh ingredients, crafted with passion</p>
       </div>

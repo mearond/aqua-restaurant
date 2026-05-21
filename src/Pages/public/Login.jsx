@@ -13,17 +13,17 @@ function Login() {
   // setIsLogin is the function we call to change it
   const [isLogin, setIsLogin] = useState(true)
 
-  return (
-    <div style={{ backgroundColor: '#FAF8F3', minHeight: '100vh' }}>
-      <Navbar />
+   return (
+  <div style={{ backgroundColor: '#FAF8F3', paddingTop: '70px' }}>
+    <Navbar />
 
-      {/* Center the card on the page */}
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',   // center horizontally
-        alignItems: 'center',       // center vertically
-        padding: '80px 20px',
-      }}>
+    {/* Center the card on the page */}
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: '80px 20px',
+    }}>
 
         {/* The white card container */}
         <div style={{
