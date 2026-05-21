@@ -1,39 +1,34 @@
 import Navbar from '../../components/Navbar'
 import { useState } from 'react'
 
-// Menu data — later this will come from the database, for now it's hardcoded
 const menuData = {
   Starters: [
-    { id: 1, name: 'Tuna Tartare', description: 'Fresh tuna, avocado, sesame oil, crispy wonton', price: 18 },
-    { id: 2, name: 'Oysters on Ice', description: 'Half dozen fresh oysters with mignonette sauce', price: 22 },
-    { id: 3, name: 'Calamari Fritti', description: 'Lightly fried squid with lemon aioli', price: 14 },
+    { id: 1, name: 'Sambusa', description: 'Crispy pastry filled with spiced lentils and jalapeño', price: 10, image: '/images/menu/sambusa.jpg' },
+    { id: 2, name: 'Tibs Bruschetta', description: 'Toasted bread topped with spiced beef tibs and tomato', price: 14, image: '/images/menu/tibs-bruschetta.jpg' },
+    { id: 3, name: 'Azifa Salad', description: 'Ethiopian green lentil salad with mustard and lemon dressing', price: 10, image: '/images/menu/azifa-salad.jpg' },
   ],
   Mains: [
-    { id: 4, name: 'Grilled Sea Bass', description: 'With roasted vegetables and saffron butter sauce', price: 38 },
-    { id: 5, name: 'Lobster Risotto', description: 'Creamy arborio rice with half lobster tail', price: 52 },
-    { id: 6, name: 'Salmon en Croûte', description: 'Herb-crusted salmon wrapped in golden pastry', price: 34 },
+    { id: 4, name: 'Doro Wat', description: 'Slow-cooked chicken in rich berbere sauce served with injera', price: 28, image: '/images/menu/doro-wat.jpg' },
+    { id: 5, name: 'Grilled Tibs Steak', description: 'Tender pan-seared beef with rosemary, garlic and spiced butter', price: 36, image: '/images/menu/tibs-steak.jpg' },
+    { id: 6, name: 'Shiro', description: 'Creamy chickpea shiro sauce over penne, topped with niter kibbeh', price: 22, image: '/images/menu/shiro.jpg' },
   ],
   Desserts: [
-    { id: 7, name: 'Crème Brûlée', description: 'Classic vanilla custard with caramelized sugar', price: 12 },
-    { id: 8, name: 'Chocolate Fondant', description: 'Warm dark chocolate cake with vanilla ice cream', price: 14 },
-    { id: 9, name: 'Mango Sorbet', description: 'Fresh mango sorbet with coconut flakes', price: 10 },
+    { id: 7, name: 'Honey Cake', description: 'Traditional Ethiopian honey wine cake with cream', price: 10, image: '/images/menu/honey-cake.jpg' },
+    { id: 8, name: 'Chocolate Fondant', description: 'Warm dark chocolate cake with tej-infused vanilla ice cream', price: 13, image: '/images/menu/chocolate-fondant.jpg' },
+    { id: 9, name: 'Fruit Salad', description: 'Seasonal fresh fruit with spiced yogurt and mint', price: 9, image: '/images/menu/fruit-salad.jpg' },
   ],
   Drinks: [
-    { id: 10, name: 'Ocean Breeze', description: 'Signature cocktail with rum, lime, and blue curaçao', price: 16 },
-    { id: 11, name: 'Sparkling Water', description: 'San Pellegrino 750ml', price: 6 },
-    { id: 12, name: 'House Wine', description: 'Red or white, glass pour', price: 12 },
+    { id: 10, name: 'Tej', description: 'Traditional Ethiopian honey wine, served chilled', price: 12, image: '/images/menu/tej.jpg' },
+    { id: 11, name: 'Spiced Ethiopian Coffee', description: 'Traditional buna with cardamom and a hint of clove', price: 7, image: '/images/menu/ethiopian-coffee.jpg' },
+    { id: 12, name: 'Avocado Juice', description: 'Creamy blended avocado with a touch of sugar, Addis-style', price: 8, image: '/images/menu/avocado-juice.jpg' },
   ],
 }
 
-// The categories we'll show as filter buttons
 const categories = ['All', 'Starters', 'Mains', 'Desserts', 'Drinks']
 
 function Menu() {
-  // Tracks which category is selected, starts on 'All'
   const [activeCategory, setActiveCategory] = useState('All')
 
-  // If 'All' is selected, combine every category into one flat list
-  // Otherwise just show the selected category's items
   const itemsToShow = activeCategory === 'All'
     ? Object.values(menuData).flat()
     : menuData[activeCategory]
@@ -49,7 +44,7 @@ function Menu() {
         textAlign: 'center',
         padding: '60px 40px',
       }}>
-        <h1 style={{ fontSize: '42px', color: '#27B7B7', marginBottom: '12px' }}>Our Menu</h1>
+        <h1 style={{ fontSize: '42px', color: '#27B7B7', marginBottom: '12px'}}>Our Menu</h1>
         <p style={{ opacity: 0.8, fontSize: '16px' }}>Fresh ingredients, crafted with passion</p>
       </div>
 
@@ -72,7 +67,6 @@ function Menu() {
               cursor: 'pointer',
               fontWeight: '600',
               fontSize: '14px',
-              // Active category gets filled, inactive stays outlined
               backgroundColor: activeCategory === category ? '#1E81B0' : 'transparent',
               color: activeCategory === category ? '#fff' : '#1E81B0',
               transition: 'all 0.2s',
@@ -98,38 +92,29 @@ function Menu() {
             style={{
               backgroundColor: '#fff',
               borderRadius: '12px',
-              padding: '28px',
+              overflow: 'hidden', // keeps image corners rounded
               boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
               border: '1px solid #e0ddd8',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
             }}
           >
-            <div>
+            {/* Food image — takes up top portion of card */}
+            <img
+              src={item.image}
+              alt={item.name}
+              style={{
+                width: '100%',
+                height: '200px',
+                objectFit: 'cover', // crops image nicely without stretching
+              }}
+            />
+
+            {/* Card content */}
+            <div style={{ padding: '20px' }}>
               <h3 style={{ color: '#12344D', marginBottom: '8px', fontSize: '18px' }}>{item.name}</h3>
-              <p style={{ color: '#888', fontSize: '14px', lineHeight: '1.6' }}>{item.description}</p>
-            </div>
-            {/* Price tag at the bottom of the card */}
-            <div style={{
-              marginTop: '20px',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-              <span style={{ color: '#1E81B0', fontWeight: '700', fontSize: '20px' }}>${item.price}</span>
-              <button style={{
-                backgroundColor: '#FF7F6A',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '8px',
-                padding: '8px 18px',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontSize: '13px',
-              }}>
-                Order Now
-              </button>
+              <p style={{ color: '#888', fontSize: '14px', lineHeight: '1.6', marginBottom: '16px' }}>{item.description}</p>
+
+              {/* Price in coral color (same as old Order Now button) */}
+              <span style={{ color: '#FF7F6A', fontWeight: '700', fontSize: '22px' }}>${item.price}</span>
             </div>
           </div>
         ))}
