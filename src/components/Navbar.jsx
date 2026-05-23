@@ -4,7 +4,13 @@ import './Navbar.css'
 function Navbar() {
   return (
     <nav className="navbar">
-      <Link to="/" className="navbar-logo">AQUA</Link>
+     <Link to="/" className="navbar-logo">
+        <img
+            src="/images/logo.png"
+            alt="AQUA"
+            style={{ height: '40px', objectFit: 'contain' }}
+        />
+    </Link>
 
       <div className="navbar-links">
         <Link to="/">Home</Link>
