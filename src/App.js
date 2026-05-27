@@ -8,7 +8,7 @@ import Login from './Pages/public/Login'
 
 import CustomerDashboard from './Pages/customer/Dashboard'
 import Reservations from './Pages/customer/Reservations'
-import Orders from './Pages/customer/Orders'
+import Profile from './Pages/customer/Profile'
 
 import AdminDashboard from './Pages/admin/Dashboard'
 import ManageMenu from './Pages/admin/ManageMenu'
@@ -29,7 +29,7 @@ function App() {
         {/* Customer */}
         <Route path="/dashboard" element={<CustomerDashboard />} />
         <Route path="/reservations" element={<Reservations />} />
-        <Route path="/orders" element={<Orders />} />
+        <Route path="/profile" element={<Profile />} />
 
         {/* Admin */}
         <Route path="/admin" element={<AdminDashboard />} />
