@@ -300,7 +300,7 @@ function AdminDashboard() {
                 alignItems: 'center',
               }}>
                 <p style={{ color: '#12344D', fontSize: '12px', fontWeight: '600' }}>#{o.id}</p>
-                <p style={{ color: '#888', fontSize: '12px' }}>{o.table}</p>
+                <p style={{ color: '#7b7a52', fontSize: '12px' }}>{o.table}</p>
                 <p style={{ color: '#888', fontSize: '12px' }}>{o.items}</p>
                 <p style={{ color: '#12344D', fontSize: '12px', fontWeight: '700' }}>${o.total}</p>
                 <span style={{
