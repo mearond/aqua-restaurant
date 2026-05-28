@@ -6,6 +6,12 @@ function ManageMenu() {
 
   const [activeCategory, setActiveCategory] = useState('All')
   const [search, setSearch] = useState('')
+  const [showAddModal, setShowAddModal] = useState(false)
+
+  // New item form state
+  const [newItem, setNewItem] = useState({
+    name: '', desc: '', price: '', category: 'Starter', image: '', available: true,
+  })
 
   const [menuItems, setMenuItems] = useState([
     { id: 1, name: 'Sambusa', desc: 'Crispy pastry filled with spiced lentils and jalapeño', price: 10, category: 'Starter', image: '/images/menu/sambusa.jpg', available: true },
@@ -22,17 +28,27 @@ function ManageMenu() {
     { id: 12, name: 'Avocado Juice', desc: 'Creamy blended avocado with a touch of sugar, Addis-style', price: 8, category: 'Drink', image: '/images/menu/avocado-juice.jpg', available: true },
   ])
 
-  // Toggle availability
   const toggleAvailable = (id) => {
     setMenuItems(prev => prev.map(item => item.id === id ? { ...item, available: !item.available } : item))
   }
 
-  // Delete item
   const deleteItem = (id) => {
     setMenuItems(prev => prev.filter(item => item.id !== id))
   }
 
-  // Category badge colors
+  const handleAddItem = () => {
+    if (!newItem.name || !newItem.price) return
+    const id = menuItems.length + 1
+    setMenuItems(prev => [...prev, {
+      ...newItem,
+      id,
+      price: parseFloat(newItem.price),
+      image: newItem.image || '/images/menu/sambusa.jpg',
+    }])
+    setNewItem({ name: '', desc: '', price: '', category: 'Starter', image: '', available: true })
+    setShowAddModal(false)
+  }
+
   const categoryColors = {
     Starter: { bg: 'rgba(30,129,176,0.1)', color: '#1E81B0' },
     Main: { bg: 'rgba(39,183,183,0.1)', color: '#27B7B7' },
@@ -40,7 +56,6 @@ function ManageMenu() {
     Drink: { bg: 'rgba(155,89,182,0.1)', color: '#9B59B6' },
   }
 
-  // Filter items
   const filtered = menuItems.filter(item => {
     const matchesCategory = activeCategory === 'All' || item.category === activeCategory
     const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase())
@@ -49,6 +64,28 @@ function ManageMenu() {
 
   const Icon = ({ symbol, color = 'rgba(255,255,255,0.4)', size = 15 }) => (
     <span style={{ color, fontSize: size, lineHeight: 1, flexShrink: 0 }}>{symbol}</span>
+  )
+
+  // Reusable input field for the modal
+  const ModalField = ({ label, type = 'text', value, onChange, placeholder }) => (
+    <div style={{ marginBottom: '16px' }}>
+      <p style={{ color: '#888', fontSize: '11px', letterSpacing: '1px', marginBottom: '6px' }}>{label}</p>
+      <input
+        type={type}
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+        style={{
+          width: '100%', padding: '11px 14px',
+          border: '0.5px solid #e0ddd8', borderRadius: '8px',
+          fontSize: '13px', color: '#12344D', outline: 'none',
+          boxSizing: 'border-box', background: '#FAF8F3',
+          transition: 'border-color 0.2s',
+        }}
+        onFocus={e => e.target.style.borderColor = '#27B7B7'}
+        onBlur={e => e.target.style.borderColor = '#e0ddd8'}
+      />
+    </div>
   )
 
   return (
@@ -109,7 +146,11 @@ function ManageMenu() {
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
             <button style={{ border: '0.5px solid #e0ddd8', background: '#fff', color: '#12344D', padding: '10px 16px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>Export CSV</button>
-            <button style={{ background: '#FF7F6A', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>+ Add Item</button>
+            <button
+              onClick={() => setShowAddModal(true)}
+              style={{ background: '#FF7F6A', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>
+              + Add Item
+            </button>
           </div>
         </div>
 
@@ -165,8 +206,6 @@ function ManageMenu() {
 
           {/* Menu table */}
           <div style={{ background: '#fff', borderRadius: '16px', border: '0.5px solid #e0ddd8', overflow: 'hidden' }}>
-
-            {/* Header */}
             <div style={{ display: 'grid', gridTemplateColumns: '52px 1.4fr 2fr 80px 100px 70px 110px', padding: '12px 20px', background: '#FAF8F3', borderBottom: '0.5px solid #e0ddd8', alignItems: 'center' }}>
               <div />
               <p style={{ color: '#888', fontSize: '10px', fontWeight: '600', letterSpacing: '1px' }}>NAME</p>
@@ -177,7 +216,6 @@ function ManageMenu() {
               <p style={{ color: '#888', fontSize: '10px', fontWeight: '600', letterSpacing: '1px' }}>ACTIONS</p>
             </div>
 
-            {/* Rows */}
             {filtered.map((item, i) => {
               const cat = categoryColors[item.category]
               return (
@@ -189,18 +227,11 @@ function ManageMenu() {
                   alignItems: 'center',
                   opacity: item.available ? 1 : 0.45,
                 }}>
-                  {/* Image */}
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover', flexShrink: 0 }}
-                  />
+                  <img src={item.image} alt={item.name} style={{ width: '36px', height: '36px', borderRadius: '8px', objectFit: 'cover', flexShrink: 0 }} />
                   <p style={{ color: '#12344D', fontSize: '13px', fontWeight: '600' }}>{item.name}</p>
                   <p style={{ color: '#888', fontSize: '12px', paddingRight: '16px' }}>{item.desc}</p>
                   <p style={{ color: '#12344D', fontSize: '13px', fontWeight: '700' }}>${item.price}</p>
                   <span style={{ background: cat.bg, color: cat.color, padding: '4px 10px', borderRadius: '10px', fontSize: '10px', fontWeight: '600', display: 'inline-block', width: 'fit-content' }}>{item.category}</span>
-
-                  {/* Availability toggle */}
                   <div
                     onClick={() => toggleAvailable(item.id)}
                     style={{
@@ -213,8 +244,6 @@ function ManageMenu() {
                     }}>
                     <div style={{ width: '15px', height: '15px', background: '#fff', borderRadius: '50%', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
                   </div>
-
-                  {/* Actions */}
                   <div style={{ display: 'flex', gap: '6px' }}>
                     <button style={{ border: '0.5px solid #e0ddd8', background: 'none', color: '#12344D', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: '500' }}>Edit</button>
                     <button onClick={() => deleteItem(item.id)} style={{ border: '0.5px solid rgba(255,127,106,0.4)', background: 'none', color: '#FF7F6A', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: '500' }}>Del</button>
@@ -224,13 +253,91 @@ function ManageMenu() {
             })}
 
             {filtered.length === 0 && (
-              <div style={{ padding: '60px', textAlign: 'center', color: '#888', fontSize: '14px' }}>
-                No items found.
-              </div>
+              <div style={{ padding: '60px', textAlign: 'center', color: '#888', fontSize: '14px' }}>No items found.</div>
             )}
           </div>
         </div>
       </div>
+
+      {/* ── Add Item Modal ── */}
+      {showAddModal && (
+        <div style={{
+          position: 'fixed', inset: 0,
+          background: 'rgba(0,0,0,0.5)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 1000,
+        }}>
+          <div style={{ background: '#fff', borderRadius: '16px', padding: '36px', width: '480px', boxShadow: '0 8px 40px rgba(0,0,0,0.2)', maxHeight: '90vh', overflowY: 'auto' }}>
+
+            {/* Modal header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <div>
+                <p style={{ color: '#12344D', fontSize: '18px', fontWeight: '700' }}>Add Menu Item</p>
+                <p style={{ color: '#888', fontSize: '12px', marginTop: '2px' }}>Fill in the details for the new dish</p>
+              </div>
+              <button
+                onClick={() => setShowAddModal(false)}
+                style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#888', lineHeight: 1 }}>
+                ✕
+              </button>
+            </div>
+
+            <ModalField label="ITEM NAME" value={newItem.name} onChange={e => setNewItem(p => ({ ...p, name: e.target.value }))} placeholder="e.g. Doro Wat" />
+            <ModalField label="DESCRIPTION" value={newItem.desc} onChange={e => setNewItem(p => ({ ...p, desc: e.target.value }))} placeholder="Brief description of the dish" />
+            <ModalField label="PRICE ($)" type="number" value={newItem.price} onChange={e => setNewItem(p => ({ ...p, price: e.target.value }))} placeholder="e.g. 25" />
+
+            {/* Category select */}
+            <div style={{ marginBottom: '16px' }}>
+              <p style={{ color: '#888', fontSize: '11px', letterSpacing: '1px', marginBottom: '6px' }}>CATEGORY</p>
+              <select
+                value={newItem.category}
+                onChange={e => setNewItem(p => ({ ...p, category: e.target.value }))}
+                style={{ width: '100%', padding: '11px 14px', border: '0.5px solid #e0ddd8', borderRadius: '8px', fontSize: '13px', color: '#12344D', outline: 'none', background: '#FAF8F3', boxSizing: 'border-box' }}>
+                <option value="Starter">Starter</option>
+                <option value="Main">Main</option>
+                <option value="Dessert">Dessert</option>
+                <option value="Drink">Drink</option>
+              </select>
+            </div>
+
+            <ModalField label="IMAGE PATH" value={newItem.image} onChange={e => setNewItem(p => ({ ...p, image: e.target.value }))} placeholder="e.g. /images/menu/dish.jpg" />
+
+            {/* Available toggle */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
+              <div>
+                <p style={{ color: '#12344D', fontSize: '13px', fontWeight: '600' }}>Available on menu</p>
+                <p style={{ color: '#888', fontSize: '11px' }}>Toggle off to hide from customers</p>
+              </div>
+              <div
+                onClick={() => setNewItem(p => ({ ...p, available: !p.available }))}
+                style={{
+                  width: '44px', height: '24px',
+                  background: newItem.available ? '#27B7B7' : '#e0ddd8',
+                  borderRadius: '99px', cursor: 'pointer',
+                  display: 'flex', alignItems: 'center', padding: '3px',
+                  justifyContent: newItem.available ? 'flex-end' : 'flex-start',
+                  transition: 'all 0.2s',
+                }}>
+                <div style={{ width: '18px', height: '18px', background: '#fff', borderRadius: '50%', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+              </div>
+            </div>
+
+            {/* Modal actions */}
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button
+                onClick={() => setShowAddModal(false)}
+                style={{ flex: 1, padding: '12px', border: '0.5px solid #e0ddd8', background: 'none', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#888' }}>
+                Cancel
+              </button>
+              <button
+                onClick={handleAddItem}
+                style={{ flex: 1, padding: '12px', background: '#12344D', color: '#FAF8F3', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>
+                Add Item
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
