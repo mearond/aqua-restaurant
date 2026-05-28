@@ -4,10 +4,9 @@ import { useNavigate } from 'react-router-dom'
 function AdminDashboard() {
   const navigate = useNavigate()
 
-  // Paid status for each order — togglable
   const [paidStatus, setPaidStatus] = useState({ 14: false, 15: true, 16: false })
+  const [openTableMenu, setOpenTableMenu] = useState(null)
 
-  // Tables state — can add new ones
   const [tables, setTables] = useState([
     { id: 'T1', status: 'occupied' },
     { id: 'T2', status: 'free' },
@@ -19,7 +18,6 @@ function AdminDashboard() {
     { id: 'T8', status: 'occupied' },
   ])
 
-  // Add table modal state
   const [showAddTable, setShowAddTable] = useState(false)
   const [newTableId, setNewTableId] = useState('')
 
@@ -52,76 +50,54 @@ function AdminDashboard() {
     <span style={{ color, fontSize: size, lineHeight: 1, flexShrink: 0 }}>{symbol}</span>
   )
 
-  // Reusable table header cell
-  const TH = ({ children, flex = 1 }) => (
-    <p style={{ flex, color: '#888', fontSize: '10px', fontWeight: '600', letterSpacing: '1px' }}>{children}</p>
+  const TH = ({ children }) => (
+    <p style={{ color: '#888', fontSize: '10px', fontWeight: '600', letterSpacing: '1px' }}>{children}</p>
   )
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', fontFamily: "'Segoe UI', sans-serif" }}>
+    <div style={{ display: 'flex', minHeight: '100vh', fontFamily: "'Segoe UI', sans-serif" }} onClick={() => setOpenTableMenu(null)}>
 
       {/* ── Sidebar ── */}
       <div style={{
-        width: '240px',
-        background: '#0a1f2e',
-        display: 'flex',
-        flexDirection: 'column',
-        flexShrink: 0,
+        width: '240px', background: '#0a1f2e',
+        display: 'flex', flexDirection: 'column', flexShrink: 0,
         borderRight: '0.5px solid rgba(255,255,255,0.06)',
-        position: 'fixed',
-        top: 0, left: 0,
-        height: '100vh',
+        position: 'fixed', top: 0, left: 0, height: '100vh',
       }}>
         <div style={{ padding: '28px 28px 20px', borderBottom: '0.5px solid rgba(255,255,255,0.06)' }}>
           <img src="/images/logo.png" alt="AQUA" style={{ height: '52px', objectFit: 'contain' }} />
           <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: '10px', letterSpacing: '2px', marginTop: '6px' }}>ADMIN PANEL</p>
         </div>
-
         <div style={{ padding: '20px 28px', borderBottom: '0.5px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{
-            width: '42px', height: '42px', borderRadius: '50%',
-            background: 'linear-gradient(135deg,#FF7F6A,#1E81B0)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#fff', fontWeight: '700', fontSize: '15px', flexShrink: 0,
-          }}>A</div>
+          <div style={{ width: '42px', height: '42px', borderRadius: '50%', background: 'linear-gradient(135deg,#FF7F6A,#1E81B0)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: '700', fontSize: '15px', flexShrink: 0 }}>A</div>
           <div>
             <p style={{ color: '#FAF8F3', fontSize: '13px', fontWeight: '600' }}>Admin</p>
             <p style={{ color: '#FF7F6A', fontSize: '10px', letterSpacing: '1px' }}>SUPER ADMIN</p>
           </div>
         </div>
-
         <div style={{ padding: '16px 0', flex: 1 }}>
-          {/* Dashboard active */}
           <div style={{ padding: '12px 28px', display: 'flex', alignItems: 'center', gap: '12px', background: 'rgba(39,183,183,0.08)', borderLeft: '2px solid #27B7B7' }}>
-            <Icon symbol="⊞" color="#27B7B7" />
-            <span style={{ color: '#27B7B7', fontSize: '13px' }}>Dashboard</span>
+            <Icon symbol="⊞" color="#27B7B7" /><span style={{ color: '#27B7B7', fontSize: '13px' }}>Dashboard</span>
           </div>
           <div onClick={() => navigate('/admin/menu')} style={{ padding: '12px 28px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-            <Icon symbol="▦" />
-            <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>Manage Menu</span>
+            <Icon symbol="▦" /><span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>Manage Menu</span>
           </div>
           <div onClick={() => navigate('/admin/orders')} style={{ padding: '12px 28px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-            <Icon symbol="◈" />
-            <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>Manage Orders</span>
+            <Icon symbol="◈" /><span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>Manage Orders</span>
           </div>
           <div onClick={() => navigate('/admin/reservations')} style={{ padding: '12px 28px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-            <Icon symbol="○" />
-            <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>Reservations</span>
+            <Icon symbol="○" /><span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>Reservations</span>
           </div>
           <div style={{ padding: '12px 28px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-            <Icon symbol="◎" />
-            <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>Manage Events</span>
+            <Icon symbol="◎" /><span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>Manage Events</span>
           </div>
           <div style={{ margin: '8px 0', borderTop: '0.5px solid rgba(255,255,255,0.06)' }} />
           <div onClick={() => navigate('/')} style={{ padding: '12px 28px', display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}>
-            <Icon symbol="◻" />
-            <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>Back to Site</span>
+            <Icon symbol="◻" /><span style={{ color: 'rgba(255,255,255,0.4)', fontSize: '13px' }}>Back to Site</span>
           </div>
         </div>
-
         <div style={{ padding: '20px 28px', borderTop: '0.5px solid rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
-          <Icon symbol="←" color="#FF7F6A" />
-          <span style={{ color: '#FF7F6A', fontSize: '13px' }}>Logout</span>
+          <Icon symbol="←" color="#FF7F6A" /><span style={{ color: '#FF7F6A', fontSize: '13px' }}>Logout</span>
         </div>
       </div>
 
@@ -140,14 +116,8 @@ function AdminDashboard() {
             <p style={{ color: '#888', fontSize: '12px', marginTop: '2px' }}>Live overview of restaurant activity</p>
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
-            <button style={{ border: '0.5px solid #e0ddd8', background: 'none', color: '#12344D', padding: '10px 16px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>
-              Export Report
-            </button>
-            <button
-              onClick={() => navigate('/admin/menu')}
-              style={{ background: '#12344D', color: '#FAF8F3', border: 'none', padding: '10px 16px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>
-              + Add Menu Item
-            </button>
+            <button style={{ border: '0.5px solid #e0ddd8', background: 'none', color: '#12344D', padding: '10px 16px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>Export Report</button>
+            <button onClick={() => navigate('/admin/menu')} style={{ background: '#12344D', color: '#FAF8F3', border: 'none', padding: '10px 16px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>+ Add Menu Item</button>
           </div>
         </div>
 
@@ -189,17 +159,15 @@ function AdminDashboard() {
             </div>
           </div>
 
-          {/* Today's Reservations — full width table */}
+          {/* Today's Reservations */}
           <div style={{ background: '#fff', borderRadius: '12px', padding: '22px', border: '0.5px solid #e0ddd8', marginBottom: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                 <div style={{ width: '3px', height: '18px', background: '#27B7B7', borderRadius: '2px' }} />
                 <p style={{ color: '#12344D', fontSize: '14px', fontWeight: '600' }}>Today's Reservations</p>
               </div>
-              <span style={{ color: '#1E81B0', fontSize: '11px', cursor: 'pointer' }}>View all</span>
+              <span style={{ color: '#1E81B0', fontSize: '11px', cursor: 'pointer' }} onClick={() => navigate('/admin/reservations')}>View all</span>
             </div>
-
-            {/* Header */}
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 0.5fr 1fr', gap: '16px', padding: '10px 16px', background: '#FAF8F3', borderRadius: '8px', marginBottom: '4px' }}>
               <TH>CUSTOMER</TH>
               <TH>TABLE</TH>
@@ -207,8 +175,6 @@ function AdminDashboard() {
               <TH>GUESTS</TH>
               <TH>STATUS</TH>
             </div>
-
-            {/* Rows */}
             {reservations.map((r, i) => (
               <div key={r.id} style={{
                 display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 0.5fr 1fr',
@@ -230,7 +196,7 @@ function AdminDashboard() {
             ))}
           </div>
 
-          {/* Table Status — full width */}
+          {/* Table Status */}
           <div style={{ background: '#fff', borderRadius: '12px', padding: '22px', border: '0.5px solid #e0ddd8', marginBottom: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -238,40 +204,74 @@ function AdminDashboard() {
                 <p style={{ color: '#12344D', fontSize: '14px', fontWeight: '600' }}>Table Status — Now</p>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                {/* Legend */}
                 {[{ color: '#27B7B7', label: 'Free' }, { color: '#FF7F6A', label: 'Occupied' }, { color: '#9B59B6', label: 'Reserved' }].map(l => (
                   <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                     <div style={{ width: '8px', height: '8px', borderRadius: '2px', background: l.color }} />
                     <span style={{ fontSize: '11px', color: '#888' }}>{l.label}</span>
                   </div>
                 ))}
-                {/* Add table button */}
                 <button
-                  onClick={() => setShowAddTable(true)}
+                  onClick={e => { e.stopPropagation(); setShowAddTable(true) }}
                   style={{ background: '#12344D', color: '#FAF8F3', border: 'none', padding: '7px 14px', borderRadius: '7px', fontSize: '11px', fontWeight: '600', cursor: 'pointer' }}>
                   + Add Table
                 </button>
               </div>
             </div>
 
-            {/* Table grid */}
+            <p style={{ color: '#888', fontSize: '11px', marginBottom: '12px' }}>Click any table to change its status</p>
+
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gap: '10px' }}>
               {tables.map(t => {
                 const s = tableStyles[t.status]
                 return (
-                  <div key={t.id} style={{
-                    background: s.bg, border: `0.5px solid ${s.border}`,
-                    borderRadius: '8px', padding: '12px 6px', textAlign: 'center',
-                  }}>
-                    <p style={{ color: '#12344D', fontSize: '12px', fontWeight: '600', marginBottom: '4px' }}>{t.id}</p>
-                    <p style={{ color: s.color, fontSize: '10px' }}>{s.label}</p>
+                  <div key={t.id} style={{ position: 'relative' }}>
+                    <div
+                      onClick={e => { e.stopPropagation(); setOpenTableMenu(openTableMenu === t.id ? null : t.id) }}
+                      style={{
+                        background: s.bg, border: `0.5px solid ${s.border}`,
+                        borderRadius: '8px', padding: '12px 6px', textAlign: 'center',
+                        cursor: 'pointer',
+                      }}>
+                      <p style={{ color: '#12344D', fontSize: '12px', fontWeight: '600', marginBottom: '4px' }}>{t.id}</p>
+                      <p style={{ color: s.color, fontSize: '10px' }}>{s.label}</p>
+                    </div>
+
+                    {/* Status dropdown */}
+                    {openTableMenu === t.id && (
+                      <div
+                        onClick={e => e.stopPropagation()}
+                        style={{
+                          position: 'absolute', top: '100%', left: 0, zIndex: 50,
+                          background: '#fff', borderRadius: '8px', border: '0.5px solid #e0ddd8',
+                          boxShadow: '0 4px 16px rgba(0,0,0,0.1)', overflow: 'hidden',
+                          marginTop: '4px', minWidth: '110px',
+                        }}>
+                        {['free', 'occupied', 'reserved'].map(status => (
+                          <div
+                            key={status}
+                            onClick={() => {
+                              setTables(prev => prev.map(tbl => tbl.id === t.id ? { ...tbl, status } : tbl))
+                              setOpenTableMenu(null)
+                            }}
+                            style={{
+                              padding: '9px 14px', fontSize: '12px', cursor: 'pointer',
+                              color: t.status === status ? '#27B7B7' : '#12344D',
+                              fontWeight: t.status === status ? '600' : '400',
+                              background: t.status === status ? 'rgba(39,183,183,0.06)' : 'transparent',
+                              textTransform: 'capitalize',
+                            }}>
+                            {status}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 )
               })}
             </div>
           </div>
 
-          {/* Active Orders — excel style */}
+          {/* Active Orders */}
           <div style={{ background: '#fff', borderRadius: '12px', padding: '22px', border: '0.5px solid #e0ddd8' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '18px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -280,8 +280,6 @@ function AdminDashboard() {
               </div>
               <span style={{ color: '#1E81B0', fontSize: '11px', cursor: 'pointer' }} onClick={() => navigate('/admin/orders')}>View all</span>
             </div>
-
-            {/* Header */}
             <div style={{ display: 'grid', gridTemplateColumns: '0.5fr 0.5fr 2.5fr 0.7fr 1fr 0.8fr', gap: '16px', padding: '10px 16px', background: '#FAF8F3', borderRadius: '8px', marginBottom: '4px' }}>
               <TH>ORDER#</TH>
               <TH>TABLE</TH>
@@ -290,8 +288,6 @@ function AdminDashboard() {
               <TH>STATUS</TH>
               <TH>PAID</TH>
             </div>
-
-            {/* Rows */}
             {orders.map((o, i) => (
               <div key={o.id} style={{
                 display: 'grid', gridTemplateColumns: '0.5fr 0.5fr 2.5fr 0.7fr 1fr 0.8fr',
@@ -300,7 +296,7 @@ function AdminDashboard() {
                 alignItems: 'center',
               }}>
                 <p style={{ color: '#12344D', fontSize: '12px', fontWeight: '600' }}>#{o.id}</p>
-                <p style={{ color: '#7b7a52', fontSize: '12px' }}>{o.table}</p>
+                <p style={{ color: '#888', fontSize: '12px' }}>{o.table}</p>
                 <p style={{ color: '#888', fontSize: '12px' }}>{o.items}</p>
                 <p style={{ color: '#12344D', fontSize: '12px', fontWeight: '700' }}>${o.total}</p>
                 <span style={{
@@ -309,16 +305,13 @@ function AdminDashboard() {
                   padding: '3px 10px', borderRadius: '20px', fontSize: '10px', fontWeight: '600',
                   display: 'inline-block', width: 'fit-content',
                 }}>{o.status}</span>
-
-                {/* Paid toggle */}
                 <div
                   onClick={() => setPaidStatus(prev => ({ ...prev, [o.id]: !prev[o.id] }))}
                   style={{
                     width: '38px', height: '22px',
                     background: paidStatus[o.id] ? '#27B7B7' : '#e0ddd8',
                     borderRadius: '99px', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center',
-                    padding: '3px',
+                    display: 'flex', alignItems: 'center', padding: '3px',
                     justifyContent: paidStatus[o.id] ? 'flex-end' : 'flex-start',
                     transition: 'all 0.2s',
                   }}>
@@ -332,39 +325,23 @@ function AdminDashboard() {
 
       {/* ── Add Table Modal ── */}
       {showAddTable && (
-        <div style={{
-          position: 'fixed', inset: 0,
-          background: 'rgba(0,0,0,0.5)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 1000,
-        }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#fff', borderRadius: '16px', padding: '32px', width: '320px', boxShadow: '0 8px 32px rgba(0,0,0,0.2)' }}>
-            <p style={{ color: '#12344D', fontSize: '16px', fontWeight: '700', marginBottom: '6px' }}>Add New Table</p>
-            <p style={{ color: '#888', fontSize: '12px', marginBottom: '24px' }}>Enter a table ID to add it to the floor plan</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <p style={{ color: '#12344D', fontSize: '16px', fontWeight: '700' }}>Add New Table</p>
+              <button onClick={() => setShowAddTable(false)} style={{ background: 'none', border: 'none', fontSize: '18px', cursor: 'pointer', color: '#888' }}>✕</button>
+            </div>
             <p style={{ color: '#888', fontSize: '11px', letterSpacing: '1px', marginBottom: '6px' }}>TABLE ID</p>
             <input
               type="text"
               placeholder="e.g. T9"
               value={newTableId}
               onChange={e => setNewTableId(e.target.value)}
-              style={{
-                width: '100%', padding: '11px 14px',
-                border: '0.5px solid #e0ddd8', borderRadius: '8px',
-                fontSize: '13px', outline: 'none', boxSizing: 'border-box',
-                marginBottom: '20px',
-              }}
+              style={{ width: '100%', padding: '11px 14px', border: '0.5px solid #e0ddd8', borderRadius: '8px', fontSize: '13px', outline: 'none', boxSizing: 'border-box', marginBottom: '20px' }}
             />
             <div style={{ display: 'flex', gap: '10px' }}>
-              <button
-                onClick={() => setShowAddTable(false)}
-                style={{ flex: 1, padding: '11px', border: '0.5px solid #e0ddd8', background: 'none', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#888' }}>
-                Cancel
-              </button>
-              <button
-                onClick={handleAddTable}
-                style={{ flex: 1, padding: '11px', background: '#12344D', color: '#FAF8F3', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>
-                Add Table
-              </button>
+              <button onClick={() => setShowAddTable(false)} style={{ flex: 1, padding: '11px', border: '0.5px solid #e0ddd8', background: 'none', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#888' }}>Cancel</button>
+              <button onClick={handleAddTable} style={{ flex: 1, padding: '11px', background: '#12344D', color: '#FAF8F3', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>Add Table</button>
             </div>
           </div>
         </div>
