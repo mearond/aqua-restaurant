@@ -7,8 +7,9 @@ function ManageMenu() {
   const [activeCategory, setActiveCategory] = useState('All')
   const [search, setSearch] = useState('')
   const [showAddModal, setShowAddModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [editItem, setEditItem] = useState(null)
 
-  // New item form state
   const [newItem, setNewItem] = useState({
     name: '', desc: '', price: '', category: 'Starter', image: '', available: true,
   })
@@ -40,13 +41,21 @@ function ManageMenu() {
     if (!newItem.name || !newItem.price) return
     const id = menuItems.length + 1
     setMenuItems(prev => [...prev, {
-      ...newItem,
-      id,
+      ...newItem, id,
       price: parseFloat(newItem.price),
       image: newItem.image || '/images/menu/sambusa.jpg',
     }])
     setNewItem({ name: '', desc: '', price: '', category: 'Starter', image: '', available: true })
     setShowAddModal(false)
+  }
+
+  const handleEditItem = () => {
+    if (!editItem.name || !editItem.price) return
+    setMenuItems(prev => prev.map(item =>
+      item.id === editItem.id ? { ...editItem, price: parseFloat(editItem.price) } : item
+    ))
+    setShowEditModal(false)
+    setEditItem(null)
   }
 
   const categoryColors = {
@@ -66,25 +75,76 @@ function ManageMenu() {
     <span style={{ color, fontSize: size, lineHeight: 1, flexShrink: 0 }}>{symbol}</span>
   )
 
-  // Reusable input field for the modal
   const ModalField = ({ label, type = 'text', value, onChange, placeholder }) => (
     <div style={{ marginBottom: '16px' }}>
       <p style={{ color: '#888', fontSize: '11px', letterSpacing: '1px', marginBottom: '6px' }}>{label}</p>
       <input
-        type={type}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
+        type={type} value={value} onChange={onChange} placeholder={placeholder}
         style={{
           width: '100%', padding: '11px 14px',
           border: '0.5px solid #e0ddd8', borderRadius: '8px',
           fontSize: '13px', color: '#12344D', outline: 'none',
-          boxSizing: 'border-box', background: '#FAF8F3',
-          transition: 'border-color 0.2s',
+          boxSizing: 'border-box', background: '#FAF8F3', transition: 'border-color 0.2s',
         }}
         onFocus={e => e.target.style.borderColor = '#27B7B7'}
         onBlur={e => e.target.style.borderColor = '#e0ddd8'}
       />
+    </div>
+  )
+
+  // Reusable modal content — used by both Add and Edit
+  const ModalBody = ({ item, setItem, onSubmit, onClose, title, subtitle, btnLabel }) => (
+    <div style={{ background: '#fff', borderRadius: '16px', padding: '36px', width: '480px', boxShadow: '0 8px 40px rgba(0,0,0,0.2)', maxHeight: '90vh', overflowY: 'auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <div>
+          <p style={{ color: '#12344D', fontSize: '18px', fontWeight: '700' }}>{title}</p>
+          <p style={{ color: '#888', fontSize: '12px', marginTop: '2px' }}>{subtitle}</p>
+        </div>
+        <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#888', lineHeight: 1 }}>✕</button>
+      </div>
+
+      <ModalField label="ITEM NAME" value={item.name} onChange={e => setItem(p => ({ ...p, name: e.target.value }))} placeholder="e.g. Doro Wat" />
+      <ModalField label="DESCRIPTION" value={item.desc} onChange={e => setItem(p => ({ ...p, desc: e.target.value }))} placeholder="Brief description of the dish" />
+      <ModalField label="PRICE ($)" type="number" value={item.price} onChange={e => setItem(p => ({ ...p, price: e.target.value }))} placeholder="e.g. 25" />
+
+      <div style={{ marginBottom: '16px' }}>
+        <p style={{ color: '#888', fontSize: '11px', letterSpacing: '1px', marginBottom: '6px' }}>CATEGORY</p>
+        <select
+          value={item.category}
+          onChange={e => setItem(p => ({ ...p, category: e.target.value }))}
+          style={{ width: '100%', padding: '11px 14px', border: '0.5px solid #e0ddd8', borderRadius: '8px', fontSize: '13px', color: '#12344D', outline: 'none', background: '#FAF8F3', boxSizing: 'border-box' }}>
+          <option value="Starter">Starter</option>
+          <option value="Main">Main</option>
+          <option value="Dessert">Dessert</option>
+          <option value="Drink">Drink</option>
+        </select>
+      </div>
+
+      <ModalField label="IMAGE PATH" value={item.image} onChange={e => setItem(p => ({ ...p, image: e.target.value }))} placeholder="e.g. /images/menu/dish.jpg" />
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
+        <div>
+          <p style={{ color: '#12344D', fontSize: '13px', fontWeight: '600' }}>Available on menu</p>
+          <p style={{ color: '#888', fontSize: '11px' }}>Toggle off to hide from customers</p>
+        </div>
+        <div
+          onClick={() => setItem(p => ({ ...p, available: !p.available }))}
+          style={{
+            width: '44px', height: '24px',
+            background: item.available ? '#27B7B7' : '#e0ddd8',
+            borderRadius: '99px', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', padding: '3px',
+            justifyContent: item.available ? 'flex-end' : 'flex-start',
+            transition: 'all 0.2s',
+          }}>
+          <div style={{ width: '18px', height: '18px', background: '#fff', borderRadius: '50%', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
+        </div>
+      </div>
+
+      <div style={{ display: 'flex', gap: '10px' }}>
+        <button onClick={onClose} style={{ flex: 1, padding: '12px', border: '0.5px solid #e0ddd8', background: 'none', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#888' }}>Cancel</button>
+        <button onClick={onSubmit} style={{ flex: 1, padding: '12px', background: '#12344D', color: '#FAF8F3', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>{btnLabel}</button>
+      </div>
     </div>
   )
 
@@ -146,11 +206,7 @@ function ManageMenu() {
           </div>
           <div style={{ display: 'flex', gap: '10px' }}>
             <button style={{ border: '0.5px solid #e0ddd8', background: '#fff', color: '#12344D', padding: '10px 16px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>Export CSV</button>
-            <button
-              onClick={() => setShowAddModal(true)}
-              style={{ background: '#FF7F6A', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>
-              + Add Item
-            </button>
+            <button onClick={() => setShowAddModal(true)} style={{ background: '#FF7F6A', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>+ Add Item</button>
           </div>
         </div>
 
@@ -179,9 +235,7 @@ function ManageMenu() {
             <div style={{ flex: 1, minWidth: '200px', background: '#fff', border: '0.5px solid #e0ddd8', borderRadius: '8px', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
               <span style={{ color: '#888' }}>⊙</span>
               <input
-                type="text"
-                placeholder="Search menu items..."
-                value={search}
+                type="text" placeholder="Search menu items..." value={search}
                 onChange={e => setSearch(e.target.value)}
                 style={{ border: 'none', outline: 'none', fontSize: '13px', color: '#12344D', width: '100%', background: 'transparent' }}
               />
@@ -245,8 +299,16 @@ function ManageMenu() {
                     <div style={{ width: '15px', height: '15px', background: '#fff', borderRadius: '50%', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
                   </div>
                   <div style={{ display: 'flex', gap: '6px' }}>
-                    <button style={{ border: '0.5px solid #e0ddd8', background: 'none', color: '#12344D', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: '500' }}>Edit</button>
-                    <button onClick={() => deleteItem(item.id)} style={{ border: '0.5px solid rgba(255,127,106,0.4)', background: 'none', color: '#FF7F6A', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: '500' }}>Del</button>
+                    <button
+                      onClick={() => { setEditItem({ ...item }); setShowEditModal(true) }}
+                      style={{ border: '0.5px solid #e0ddd8', background: 'none', color: '#12344D', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: '500' }}>
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => deleteItem(item.id)}
+                      style={{ border: '0.5px solid rgba(255,127,106,0.4)', background: 'none', color: '#FF7F6A', padding: '6px 12px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: '500' }}>
+                      Del
+                    </button>
                   </div>
                 </div>
               )
@@ -261,81 +323,31 @@ function ManageMenu() {
 
       {/* ── Add Item Modal ── */}
       {showAddModal && (
-        <div style={{
-          position: 'fixed', inset: 0,
-          background: 'rgba(0,0,0,0.5)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          zIndex: 1000,
-        }}>
-          <div style={{ background: '#fff', borderRadius: '16px', padding: '36px', width: '480px', boxShadow: '0 8px 40px rgba(0,0,0,0.2)', maxHeight: '90vh', overflowY: 'auto' }}>
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <ModalBody
+            item={newItem}
+            setItem={setNewItem}
+            onSubmit={handleAddItem}
+            onClose={() => setShowAddModal(false)}
+            title="Add Menu Item"
+            subtitle="Fill in the details for the new dish"
+            btnLabel="Add Item"
+          />
+        </div>
+      )}
 
-            {/* Modal header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <div>
-                <p style={{ color: '#12344D', fontSize: '18px', fontWeight: '700' }}>Add Menu Item</p>
-                <p style={{ color: '#888', fontSize: '12px', marginTop: '2px' }}>Fill in the details for the new dish</p>
-              </div>
-              <button
-                onClick={() => setShowAddModal(false)}
-                style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#888', lineHeight: 1 }}>
-                ✕
-              </button>
-            </div>
-
-            <ModalField label="ITEM NAME" value={newItem.name} onChange={e => setNewItem(p => ({ ...p, name: e.target.value }))} placeholder="e.g. Doro Wat" />
-            <ModalField label="DESCRIPTION" value={newItem.desc} onChange={e => setNewItem(p => ({ ...p, desc: e.target.value }))} placeholder="Brief description of the dish" />
-            <ModalField label="PRICE ($)" type="number" value={newItem.price} onChange={e => setNewItem(p => ({ ...p, price: e.target.value }))} placeholder="e.g. 25" />
-
-            {/* Category select */}
-            <div style={{ marginBottom: '16px' }}>
-              <p style={{ color: '#888', fontSize: '11px', letterSpacing: '1px', marginBottom: '6px' }}>CATEGORY</p>
-              <select
-                value={newItem.category}
-                onChange={e => setNewItem(p => ({ ...p, category: e.target.value }))}
-                style={{ width: '100%', padding: '11px 14px', border: '0.5px solid #e0ddd8', borderRadius: '8px', fontSize: '13px', color: '#12344D', outline: 'none', background: '#FAF8F3', boxSizing: 'border-box' }}>
-                <option value="Starter">Starter</option>
-                <option value="Main">Main</option>
-                <option value="Dessert">Dessert</option>
-                <option value="Drink">Drink</option>
-              </select>
-            </div>
-
-            <ModalField label="IMAGE PATH" value={newItem.image} onChange={e => setNewItem(p => ({ ...p, image: e.target.value }))} placeholder="e.g. /images/menu/dish.jpg" />
-
-            {/* Available toggle */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
-              <div>
-                <p style={{ color: '#12344D', fontSize: '13px', fontWeight: '600' }}>Available on menu</p>
-                <p style={{ color: '#888', fontSize: '11px' }}>Toggle off to hide from customers</p>
-              </div>
-              <div
-                onClick={() => setNewItem(p => ({ ...p, available: !p.available }))}
-                style={{
-                  width: '44px', height: '24px',
-                  background: newItem.available ? '#27B7B7' : '#e0ddd8',
-                  borderRadius: '99px', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', padding: '3px',
-                  justifyContent: newItem.available ? 'flex-end' : 'flex-start',
-                  transition: 'all 0.2s',
-                }}>
-                <div style={{ width: '18px', height: '18px', background: '#fff', borderRadius: '50%', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
-              </div>
-            </div>
-
-            {/* Modal actions */}
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button
-                onClick={() => setShowAddModal(false)}
-                style={{ flex: 1, padding: '12px', border: '0.5px solid #e0ddd8', background: 'none', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#888' }}>
-                Cancel
-              </button>
-              <button
-                onClick={handleAddItem}
-                style={{ flex: 1, padding: '12px', background: '#12344D', color: '#FAF8F3', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>
-                Add Item
-              </button>
-            </div>
-          </div>
+      {/* ── Edit Item Modal ── */}
+      {showEditModal && editItem && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <ModalBody
+            item={editItem}
+            setItem={setEditItem}
+            onSubmit={handleEditItem}
+            onClose={() => { setShowEditModal(false); setEditItem(null) }}
+            title="Edit Menu Item"
+            subtitle="Update the details for this dish"
+            btnLabel="Save Changes"
+          />
         </div>
       )}
     </div>
