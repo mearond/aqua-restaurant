@@ -8,6 +8,8 @@ function ManageOrders() {
   const [search, setSearch] = useState('')
   const [showNewOrderModal, setShowNewOrderModal] = useState(false)
   const [newOrder, setNewOrder] = useState({ table: '', items: '', total: '' })
+  const [showEditOrderModal, setShowEditOrderModal] = useState(false)
+  const [editOrder, setEditOrder] = useState(null)
 
   const [orders, setOrders] = useState([
     { id: 14, table: 'T1', items: 'Doro Wat, Sambusa x2', total: 48, status: 'Pending', paid: false },
@@ -49,6 +51,13 @@ function ManageOrders() {
     setNewOrder({ table: '', items: '', total: '' })
     setShowNewOrderModal(false)
   }
+
+  const handleEditOrder = () => {
+  if (!editOrder.items || !editOrder.total) return
+  setOrders(prev => prev.map(o => o.id === editOrder.id ? { ...editOrder, total: parseFloat(editOrder.total) } : o))
+  setShowEditOrderModal(false)
+  setEditOrder(null)
+}
 
   const filtered = orders.filter(o => {
     const matchesFilter = activeFilter === 'All' || o.status === activeFilter
@@ -193,7 +202,7 @@ function ManageOrders() {
 
           {/* Orders table */}
           <div style={{ background: '#fff', borderRadius: '16px', border: '0.5px solid #e0ddd8', overflow: 'hidden' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '0.5fr 0.5fr 2.5fr 0.7fr 1fr 0.7fr 1fr', gap: '16px', padding: '12px 20px', background: '#FAF8F3', borderBottom: '0.5px solid #e0ddd8', alignItems: 'center' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '0.5fr 0.5fr 2fr 0.7fr 1fr 0.7fr 1.3fr', gap: '16px', padding: '12px 20px', background: '#FAF8F3', borderBottom: '0.5px solid #e0ddd8', alignItems: 'center' }}>
               {['ORDER#', 'TABLE', 'ITEMS', 'TOTAL', 'STATUS', 'PAID', 'ACTIONS'].map(h => (
                 <p key={h} style={{ color: '#888', fontSize: '10px', fontWeight: '600', letterSpacing: '1px' }}>{h}</p>
               ))}
@@ -205,7 +214,7 @@ function ManageOrders() {
               return (
                 <div key={o.id} style={{
                   display: 'grid',
-                  gridTemplateColumns: '0.5fr 0.5fr 2.5fr 0.7fr 1fr 0.7fr 1fr',
+                  gridTemplateColumns: '0.5fr 0.5fr 2fr 0.7fr 1fr 0.7fr 1.3fr',
                   gap: '16px', padding: '14px 20px',
                   borderBottom: i < filtered.length - 1 ? '0.5px solid #f5f3f0' : 'none',
                   alignItems: 'center',
@@ -235,6 +244,11 @@ function ManageOrders() {
                       <button style={{ border: '0.5px solid #e0ddd8', background: 'none', color: '#888', padding: '5px 10px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>View</button>
                     ) : (
                       <>
+                       <button
+                          onClick={() => { setEditOrder({ ...o }); setShowEditOrderModal(true) }}
+                          style={{ border: '0.5px solid #e0ddd8', background: 'none', color: '#12344D', padding: '5px 10px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: '500' }}>
+                          Edit
+                        </button> 
                         <button
                           onClick={() => progressOrder(o.id)}
                           style={{ background: o.status === 'Pending' ? '#1E81B0' : '#27B7B7', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: '500' }}>
@@ -278,6 +292,28 @@ function ManageOrders() {
             <div style={{ display: 'flex', gap: '10px', marginTop: '12px' }}>
               <button onClick={() => setShowNewOrderModal(false)} style={{ flex: 1, padding: '12px', border: '0.5px solid #e0ddd8', background: 'none', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#888' }}>Cancel</button>
               <button onClick={handleNewOrder} style={{ flex: 1, padding: '12px', background: '#12344D', color: '#FAF8F3', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>Create Order</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* ── Edit Order Modal ── */}
+      {showEditOrderModal && editOrder && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: '#fff', borderRadius: '16px', padding: '36px', width: '440px', boxShadow: '0 8px 40px rgba(0,0,0,0.2)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <div>
+                <p style={{ color: '#12344D', fontSize: '18px', fontWeight: '700' }}>Edit Order #{editOrder.id}</p>
+                <p style={{ color: '#888', fontSize: '12px', marginTop: '2px' }}>Update items or total for {editOrder.table}</p>
+              </div>
+              <button onClick={() => setShowEditOrderModal(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#888' }}>✕</button>
+            </div>
+
+            <InputField label="ITEMS" placeholder="e.g. Doro Wat, Sambusa x2" value={editOrder.items} onChange={e => setEditOrder(p => ({ ...p, items: e.target.value }))} />
+            <InputField label="TOTAL ($)" type="number" placeholder="e.g. 48" value={editOrder.total} onChange={e => setEditOrder(p => ({ ...p, total: e.target.value }))} />
+
+            <div style={{ display: 'flex', gap: '10px', marginTop: '12px' }}>
+              <button onClick={() => setShowEditOrderModal(false)} style={{ flex: 1, padding: '12px', border: '0.5px solid #e0ddd8', background: 'none', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#888' }}>Cancel</button>
+              <button onClick={handleEditOrder} style={{ flex: 1, padding: '12px', background: '#12344D', color: '#FAF8F3', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>Save Changes</button>
             </div>
           </div>
         </div>
