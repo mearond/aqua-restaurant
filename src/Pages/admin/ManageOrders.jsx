@@ -6,6 +6,8 @@ function ManageOrders() {
 
   const [activeFilter, setActiveFilter] = useState('All')
   const [search, setSearch] = useState('')
+  const [showNewOrderModal, setShowNewOrderModal] = useState(false)
+  const [newOrder, setNewOrder] = useState({ table: '', items: '', total: '' })
 
   const [orders, setOrders] = useState([
     { id: 14, table: 'T1', items: 'Doro Wat, Sambusa x2', total: 48, status: 'Pending', paid: false },
@@ -16,12 +18,10 @@ function ManageOrders() {
     { id: 12, table: 'T6', items: 'Grilled Tibs Steak, Avocado Juice', total: 44, status: 'Completed', paid: true },
   ])
 
-  // Toggle paid status
   const togglePaid = (id) => {
     setOrders(prev => prev.map(o => o.id === id ? { ...o, paid: !o.paid } : o))
   }
 
-  // Progress order: Pending → In Progress → Completed
   const progressOrder = (id) => {
     setOrders(prev => prev.map(o => {
       if (o.id !== id) return o
@@ -31,12 +31,25 @@ function ManageOrders() {
     }))
   }
 
-  // Cancel order — removes it
   const cancelOrder = (id) => {
     setOrders(prev => prev.filter(o => o.id !== id))
   }
 
-  // Filter logic
+  const handleNewOrder = () => {
+    if (!newOrder.table || !newOrder.items || !newOrder.total) return
+    const id = Math.max(...orders.map(o => o.id)) + 1
+    setOrders(prev => [...prev, {
+      id,
+      table: newOrder.table,
+      items: newOrder.items,
+      total: parseFloat(newOrder.total),
+      status: 'Pending',
+      paid: false,
+    }])
+    setNewOrder({ table: '', items: '', total: '' })
+    setShowNewOrderModal(false)
+  }
+
   const filtered = orders.filter(o => {
     const matchesFilter = activeFilter === 'All' || o.status === activeFilter
     const matchesSearch = o.table.toLowerCase().includes(search.toLowerCase()) ||
@@ -53,6 +66,18 @@ function ManageOrders() {
 
   const Icon = ({ symbol, color = 'rgba(255,255,255,0.4)', size = 15 }) => (
     <span style={{ color, fontSize: size, lineHeight: 1, flexShrink: 0 }}>{symbol}</span>
+  )
+
+  const InputField = ({ label, type = 'text', placeholder, value, onChange }) => (
+    <div style={{ marginBottom: '16px' }}>
+      <p style={{ color: '#888', fontSize: '11px', letterSpacing: '1px', marginBottom: '6px' }}>{label}</p>
+      <input
+        type={type} placeholder={placeholder} value={value} onChange={onChange}
+        style={{ width: '100%', padding: '11px 14px', border: '0.5px solid #e0ddd8', borderRadius: '8px', fontSize: '13px', color: '#12344D', outline: 'none', boxSizing: 'border-box', background: '#FAF8F3' }}
+        onFocus={e => e.target.style.borderColor = '#27B7B7'}
+        onBlur={e => e.target.style.borderColor = '#e0ddd8'}
+      />
+    </div>
   )
 
   return (
@@ -111,7 +136,9 @@ function ManageOrders() {
             <p style={{ color: '#12344D', fontSize: '18px', fontWeight: '700' }}>Manage Orders</p>
             <p style={{ color: '#888', fontSize: '12px', marginTop: '2px' }}>Track and manage all active and past orders</p>
           </div>
-          <button style={{ background: '#FF7F6A', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>
+          <button
+            onClick={() => setShowNewOrderModal(true)}
+            style={{ background: '#FF7F6A', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '8px', fontSize: '12px', fontWeight: '600', cursor: 'pointer' }}>
             + New Order
           </button>
         </div>
@@ -142,18 +169,15 @@ function ManageOrders() {
             <div style={{ flex: 1, minWidth: '200px', background: '#fff', border: '0.5px solid #e0ddd8', borderRadius: '8px', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
               <span style={{ color: '#888' }}>⊙</span>
               <input
-                type="text"
-                placeholder="Search by table or order number..."
-                value={search}
-                onChange={e => setSearch(e.target.value)}
+                type="text" placeholder="Search by table or order number..."
+                value={search} onChange={e => setSearch(e.target.value)}
                 style={{ border: 'none', outline: 'none', fontSize: '13px', color: '#12344D', width: '100%', background: 'transparent' }}
               />
             </div>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               {['All', 'Pending', 'In Progress', 'Completed'].map(f => (
                 <button
-                  key={f}
-                  onClick={() => setActiveFilter(f)}
+                  key={f} onClick={() => setActiveFilter(f)}
                   style={{
                     padding: '9px 18px', borderRadius: '20px', border: '0.5px solid #e0ddd8',
                     cursor: 'pointer', fontSize: '12px', fontWeight: '600',
@@ -169,15 +193,12 @@ function ManageOrders() {
 
           {/* Orders table */}
           <div style={{ background: '#fff', borderRadius: '16px', border: '0.5px solid #e0ddd8', overflow: 'hidden' }}>
-
-            {/* Header */}
             <div style={{ display: 'grid', gridTemplateColumns: '0.5fr 0.5fr 2.5fr 0.7fr 1fr 0.7fr 1fr', gap: '16px', padding: '12px 20px', background: '#FAF8F3', borderBottom: '0.5px solid #e0ddd8', alignItems: 'center' }}>
               {['ORDER#', 'TABLE', 'ITEMS', 'TOTAL', 'STATUS', 'PAID', 'ACTIONS'].map(h => (
                 <p key={h} style={{ color: '#888', fontSize: '10px', fontWeight: '600', letterSpacing: '1px' }}>{h}</p>
               ))}
             </div>
 
-            {/* Rows */}
             {filtered.map((o, i) => {
               const sc = statusColors[o.status]
               const isCompleted = o.status === 'Completed'
@@ -194,13 +215,9 @@ function ManageOrders() {
                   <p style={{ color: '#888', fontSize: '12px' }}>{o.table}</p>
                   <p style={{ color: '#888', fontSize: '12px' }}>{o.items}</p>
                   <p style={{ color: '#12344D', fontSize: '12px', fontWeight: '700' }}>${o.total}</p>
-
-                  {/* Status badge */}
                   <span style={{ background: sc.bg, color: sc.color, padding: '3px 10px', borderRadius: '20px', fontSize: '10px', fontWeight: '600', display: 'inline-block', width: 'fit-content' }}>
                     {o.status}
                   </span>
-
-                  {/* Paid toggle */}
                   <div
                     onClick={() => togglePaid(o.id)}
                     style={{
@@ -213,8 +230,6 @@ function ManageOrders() {
                     }}>
                     <div style={{ width: '15px', height: '15px', background: '#fff', borderRadius: '50%', boxShadow: '0 1px 3px rgba(0,0,0,0.2)' }} />
                   </div>
-
-                  {/* Action buttons — change based on status */}
                   <div style={{ display: 'flex', gap: '6px' }}>
                     {isCompleted ? (
                       <button style={{ border: '0.5px solid #e0ddd8', background: 'none', color: '#888', padding: '5px 10px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>View</button>
@@ -222,12 +237,7 @@ function ManageOrders() {
                       <>
                         <button
                           onClick={() => progressOrder(o.id)}
-                          style={{
-                            background: o.status === 'Pending' ? '#1E81B0' : '#27B7B7',
-                            color: '#fff', border: 'none',
-                            padding: '5px 10px', borderRadius: '6px',
-                            fontSize: '11px', cursor: 'pointer', fontWeight: '500',
-                          }}>
+                          style={{ background: o.status === 'Pending' ? '#1E81B0' : '#27B7B7', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: '500' }}>
                           {o.status === 'Pending' ? 'Progress' : 'Complete'}
                         </button>
                         <button
@@ -248,6 +258,30 @@ function ManageOrders() {
           </div>
         </div>
       </div>
+
+      {/* ── New Order Modal ── */}
+      {showNewOrderModal && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <div style={{ background: '#fff', borderRadius: '16px', padding: '36px', width: '440px', boxShadow: '0 8px 40px rgba(0,0,0,0.2)' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <div>
+                <p style={{ color: '#12344D', fontSize: '18px', fontWeight: '700' }}>New Order</p>
+                <p style={{ color: '#888', fontSize: '12px', marginTop: '2px' }}>Create a new order for a table</p>
+              </div>
+              <button onClick={() => setShowNewOrderModal(false)} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#888' }}>✕</button>
+            </div>
+
+            <InputField label="TABLE" placeholder="e.g. T3" value={newOrder.table} onChange={e => setNewOrder(p => ({ ...p, table: e.target.value }))} />
+            <InputField label="ITEMS" placeholder="e.g. Doro Wat, Sambusa x2" value={newOrder.items} onChange={e => setNewOrder(p => ({ ...p, items: e.target.value }))} />
+            <InputField label="TOTAL ($)" type="number" placeholder="e.g. 48" value={newOrder.total} onChange={e => setNewOrder(p => ({ ...p, total: e.target.value }))} />
+
+            <div style={{ display: 'flex', gap: '10px', marginTop: '12px' }}>
+              <button onClick={() => setShowNewOrderModal(false)} style={{ flex: 1, padding: '12px', border: '0.5px solid #e0ddd8', background: 'none', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#888' }}>Cancel</button>
+              <button onClick={handleNewOrder} style={{ flex: 1, padding: '12px', background: '#12344D', color: '#FAF8F3', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>Create Order</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
