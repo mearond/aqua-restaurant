@@ -1,6 +1,50 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+
+  const Icon = ({ symbol, color = 'rgba(255,255,255,0.4)', size = 15 }) => (
+    <span style={{ color, fontSize: size, lineHeight: 1, flexShrink: 0 }}>{symbol}</span>
+  )
+
+  const InputField = ({ label, type = 'text', placeholder, value, onChange }) => (
+    <div style={{ marginBottom: '16px' }}>
+      <p style={{ color: '#888', fontSize: '11px', letterSpacing: '1px', marginBottom: '6px' }}>{label}</p>
+      <input
+        type={type} placeholder={placeholder} value={value} onChange={onChange}
+        style={{ width: '100%', padding: '11px 14px', border: '0.5px solid #e0ddd8', borderRadius: '8px', fontSize: '13px', color: '#12344D', outline: 'none', boxSizing: 'border-box', background: '#FAF8F3' }}
+        onFocus={e => e.target.style.borderColor = '#27B7B7'}
+        onBlur={e => e.target.style.borderColor = '#e0ddd8'}
+      />
+    </div>
+  )
+
+  const ModalBody = ({ title, subtitle, data, setData, onSubmit, onClose, btnLabel }) => (
+    <div style={{ background: '#fff', borderRadius: '16px', padding: '36px', width: '480px', boxShadow: '0 8px 40px rgba(0,0,0,0.2)', maxHeight: '90vh', overflowY: 'auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <div>
+          <p style={{ color: '#12344D', fontSize: '18px', fontWeight: '700' }}>{title}</p>
+          <p style={{ color: '#888', fontSize: '12px', marginTop: '2px' }}>{subtitle}</p>
+        </div>
+        <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#888' }}>✕</button>
+      </div>
+      <InputField label="CUSTOMER NAME" placeholder="e.g. John Doe" value={data.customer} onChange={e => setData(p => ({ ...p, customer: e.target.value }))} />
+      <InputField label="EMAIL" type="email" placeholder="e.g. john@email.com" value={data.email} onChange={e => setData(p => ({ ...p, email: e.target.value }))} />
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+        <InputField label="DATE" type="date" placeholder="" value={data.date} onChange={e => setData(p => ({ ...p, date: e.target.value }))} />
+        <InputField label="TIME" type="time" placeholder="" value={data.time} onChange={e => setData(p => ({ ...p, time: e.target.value }))} />
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+        <InputField label="NUMBER OF GUESTS" type="number" placeholder="e.g. 2" value={data.guests} onChange={e => setData(p => ({ ...p, guests: e.target.value }))} />
+        <InputField label="TABLE" placeholder="e.g. Table 3" value={data.table} onChange={e => setData(p => ({ ...p, table: e.target.value }))} />
+      </div>
+      <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+        <button onClick={onClose} style={{ flex: 1, padding: '12px', border: '0.5px solid #e0ddd8', background: 'none', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#888' }}>Cancel</button>
+        <button onClick={onSubmit} style={{ flex: 1, padding: '12px', background: '#12344D', color: '#FAF8F3', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>{btnLabel}</button>
+      </div>
+    </div>
+  )
+
+  
 function ManageReservations() {
   const navigate = useNavigate()
 
@@ -73,47 +117,6 @@ function ManageReservations() {
     'Admin': { bg: 'rgba(155,89,182,0.1)', color: '#9B59B6' },
   }
 
-  const Icon = ({ symbol, color = 'rgba(255,255,255,0.4)', size = 15 }) => (
-    <span style={{ color, fontSize: size, lineHeight: 1, flexShrink: 0 }}>{symbol}</span>
-  )
-
-  const InputField = ({ label, type = 'text', placeholder, value, onChange }) => (
-    <div style={{ marginBottom: '16px' }}>
-      <p style={{ color: '#888', fontSize: '11px', letterSpacing: '1px', marginBottom: '6px' }}>{label}</p>
-      <input
-        type={type} placeholder={placeholder} value={value} onChange={onChange}
-        style={{ width: '100%', padding: '11px 14px', border: '0.5px solid #e0ddd8', borderRadius: '8px', fontSize: '13px', color: '#12344D', outline: 'none', boxSizing: 'border-box', background: '#FAF8F3' }}
-        onFocus={e => e.target.style.borderColor = '#27B7B7'}
-        onBlur={e => e.target.style.borderColor = '#e0ddd8'}
-      />
-    </div>
-  )
-
-  const ModalBody = ({ title, subtitle, data, setData, onSubmit, onClose, btnLabel }) => (
-    <div style={{ background: '#fff', borderRadius: '16px', padding: '36px', width: '480px', boxShadow: '0 8px 40px rgba(0,0,0,0.2)', maxHeight: '90vh', overflowY: 'auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <div>
-          <p style={{ color: '#12344D', fontSize: '18px', fontWeight: '700' }}>{title}</p>
-          <p style={{ color: '#888', fontSize: '12px', marginTop: '2px' }}>{subtitle}</p>
-        </div>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', fontSize: '20px', cursor: 'pointer', color: '#888' }}>✕</button>
-      </div>
-      <InputField label="CUSTOMER NAME" placeholder="e.g. John Doe" value={data.customer} onChange={e => setData(p => ({ ...p, customer: e.target.value }))} />
-      <InputField label="EMAIL" type="email" placeholder="e.g. john@email.com" value={data.email} onChange={e => setData(p => ({ ...p, email: e.target.value }))} />
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-        <InputField label="DATE" type="date" placeholder="" value={data.date} onChange={e => setData(p => ({ ...p, date: e.target.value }))} />
-        <InputField label="TIME" type="time" placeholder="" value={data.time} onChange={e => setData(p => ({ ...p, time: e.target.value }))} />
-      </div>
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-        <InputField label="NUMBER OF GUESTS" type="number" placeholder="e.g. 2" value={data.guests} onChange={e => setData(p => ({ ...p, guests: e.target.value }))} />
-        <InputField label="TABLE" placeholder="e.g. Table 3" value={data.table} onChange={e => setData(p => ({ ...p, table: e.target.value }))} />
-      </div>
-      <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
-        <button onClick={onClose} style={{ flex: 1, padding: '12px', border: '0.5px solid #e0ddd8', background: 'none', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#888' }}>Cancel</button>
-        <button onClick={onSubmit} style={{ flex: 1, padding: '12px', background: '#12344D', color: '#FAF8F3', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>{btnLabel}</button>
-      </div>
-    </div>
-  )
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', fontFamily: "'Segoe UI', sans-serif" }}>

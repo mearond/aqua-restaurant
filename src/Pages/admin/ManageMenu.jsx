@@ -1,75 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-function ManageMenu() {
-  const navigate = useNavigate()
 
-  const [activeCategory, setActiveCategory] = useState('All')
-  const [search, setSearch] = useState('')
-  const [showAddModal, setShowAddModal] = useState(false)
-  const [showEditModal, setShowEditModal] = useState(false)
-  const [editItem, setEditItem] = useState(null)
-
-  const [newItem, setNewItem] = useState({
-    name: '', desc: '', price: '', category: 'Starter', image: '', available: true,
-  })
-
-  const [menuItems, setMenuItems] = useState([
-    { id: 1, name: 'Sambusa', desc: 'Crispy pastry filled with spiced lentils and jalapeño', price: 10, category: 'Starter', image: '/images/menu/sambusa.jpg', available: true },
-    { id: 2, name: 'Tibs Bruschetta', desc: 'Toasted bread topped with spiced beef tibs and tomato', price: 14, category: 'Starter', image: '/images/menu/tibs-bruschetta.jpg', available: true },
-    { id: 3, name: 'Azifa Salad', desc: 'Ethiopian green lentil salad with mustard and lemon dressing', price: 10, category: 'Starter', image: '/images/menu/azifa-salad.jpg', available: true },
-    { id: 4, name: 'Doro Wat', desc: 'Slow-cooked chicken in rich berbere sauce served with injera', price: 28, category: 'Main', image: '/images/menu/doro-wat.jpg', available: true },
-    { id: 5, name: 'Grilled Tibs Steak', desc: 'Tender pan-seared beef with rosemary, garlic and spiced butter', price: 36, category: 'Main', image: '/images/menu/tibs-steak.jpg', available: true },
-    { id: 6, name: 'Shiro', desc: 'Creamy chickpea shiro sauce over penne, topped with niter kibbeh', price: 22, category: 'Main', image: '/images/menu/shiro.jpg', available: false },
-    { id: 7, name: 'Honey Cake', desc: 'Traditional Ethiopian honey wine cake with cream', price: 10, category: 'Dessert', image: '/images/menu/honey-cake.jpg', available: true },
-    { id: 8, name: 'Chocolate Fondant', desc: 'Warm dark chocolate cake with tej-infused vanilla ice cream', price: 13, category: 'Dessert', image: '/images/menu/chocolate-fondant.jpg', available: true },
-    { id: 9, name: 'Fruit Salad', desc: 'Seasonal fresh fruit with spiced yogurt and mint', price: 9, category: 'Dessert', image: '/images/menu/fruit-salad.jpg', available: false },
-    { id: 10, name: 'Tej', desc: 'Traditional Ethiopian honey wine, served chilled', price: 12, category: 'Drink', image: '/images/menu/tej.jpg', available: true },
-    { id: 11, name: 'Spiced Ethiopian Coffee', desc: 'Traditional buna with cardamom and a hint of clove', price: 7, category: 'Drink', image: '/images/menu/ethiopian-coffee.jpg', available: true },
-    { id: 12, name: 'Avocado Juice', desc: 'Creamy blended avocado with a touch of sugar, Addis-style', price: 8, category: 'Drink', image: '/images/menu/avocado-juice.jpg', available: true },
-  ])
-
-  const toggleAvailable = (id) => {
-    setMenuItems(prev => prev.map(item => item.id === id ? { ...item, available: !item.available } : item))
-  }
-
-  const deleteItem = (id) => {
-    setMenuItems(prev => prev.filter(item => item.id !== id))
-  }
-
-  const handleAddItem = () => {
-    if (!newItem.name || !newItem.price) return
-    const id = menuItems.length + 1
-    setMenuItems(prev => [...prev, {
-      ...newItem, id,
-      price: parseFloat(newItem.price),
-      image: newItem.image || '/images/menu/sambusa.jpg',
-    }])
-    setNewItem({ name: '', desc: '', price: '', category: 'Starter', image: '', available: true })
-    setShowAddModal(false)
-  }
-
-  const handleEditItem = () => {
-    if (!editItem.name || !editItem.price) return
-    setMenuItems(prev => prev.map(item =>
-      item.id === editItem.id ? { ...editItem, price: parseFloat(editItem.price) } : item
-    ))
-    setShowEditModal(false)
-    setEditItem(null)
-  }
-
-  const categoryColors = {
-    Starter: { bg: 'rgba(30,129,176,0.1)', color: '#1E81B0' },
-    Main: { bg: 'rgba(39,183,183,0.1)', color: '#27B7B7' },
-    Dessert: { bg: 'rgba(255,127,106,0.1)', color: '#FF7F6A' },
-    Drink: { bg: 'rgba(155,89,182,0.1)', color: '#9B59B6' },
-  }
-
-  const filtered = menuItems.filter(item => {
-    const matchesCategory = activeCategory === 'All' || item.category === activeCategory
-    const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase())
-    return matchesCategory && matchesSearch
-  })
 
   const Icon = ({ symbol, color = 'rgba(255,255,255,0.4)', size = 15 }) => (
     <span style={{ color, fontSize: size, lineHeight: 1, flexShrink: 0 }}>{symbol}</span>
@@ -147,6 +79,77 @@ function ManageMenu() {
       </div>
     </div>
   )
+
+  
+function ManageMenu() {
+  const navigate = useNavigate()
+
+  const [activeCategory, setActiveCategory] = useState('All')
+  const [search, setSearch] = useState('')
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [editItem, setEditItem] = useState(null)
+
+  const [newItem, setNewItem] = useState({
+    name: '', desc: '', price: '', category: 'Starter', image: '', available: true,
+  })
+
+  const [menuItems, setMenuItems] = useState([
+    { id: 1, name: 'Sambusa', desc: 'Crispy pastry filled with spiced lentils and jalapeño', price: 10, category: 'Starter', image: '/images/menu/sambusa.jpg', available: true },
+    { id: 2, name: 'Tibs Bruschetta', desc: 'Toasted bread topped with spiced beef tibs and tomato', price: 14, category: 'Starter', image: '/images/menu/tibs-bruschetta.jpg', available: true },
+    { id: 3, name: 'Azifa Salad', desc: 'Ethiopian green lentil salad with mustard and lemon dressing', price: 10, category: 'Starter', image: '/images/menu/azifa-salad.jpg', available: true },
+    { id: 4, name: 'Doro Wat', desc: 'Slow-cooked chicken in rich berbere sauce served with injera', price: 28, category: 'Main', image: '/images/menu/doro-wat.jpg', available: true },
+    { id: 5, name: 'Grilled Tibs Steak', desc: 'Tender pan-seared beef with rosemary, garlic and spiced butter', price: 36, category: 'Main', image: '/images/menu/tibs-steak.jpg', available: true },
+    { id: 6, name: 'Shiro', desc: 'Creamy chickpea shiro sauce over penne, topped with niter kibbeh', price: 22, category: 'Main', image: '/images/menu/shiro.jpg', available: false },
+    { id: 7, name: 'Honey Cake', desc: 'Traditional Ethiopian honey wine cake with cream', price: 10, category: 'Dessert', image: '/images/menu/honey-cake.jpg', available: true },
+    { id: 8, name: 'Chocolate Fondant', desc: 'Warm dark chocolate cake with tej-infused vanilla ice cream', price: 13, category: 'Dessert', image: '/images/menu/chocolate-fondant.jpg', available: true },
+    { id: 9, name: 'Fruit Salad', desc: 'Seasonal fresh fruit with spiced yogurt and mint', price: 9, category: 'Dessert', image: '/images/menu/fruit-salad.jpg', available: false },
+    { id: 10, name: 'Tej', desc: 'Traditional Ethiopian honey wine, served chilled', price: 12, category: 'Drink', image: '/images/menu/tej.jpg', available: true },
+    { id: 11, name: 'Spiced Ethiopian Coffee', desc: 'Traditional buna with cardamom and a hint of clove', price: 7, category: 'Drink', image: '/images/menu/ethiopian-coffee.jpg', available: true },
+    { id: 12, name: 'Avocado Juice', desc: 'Creamy blended avocado with a touch of sugar, Addis-style', price: 8, category: 'Drink', image: '/images/menu/avocado-juice.jpg', available: true },
+  ])
+
+  const toggleAvailable = (id) => {
+    setMenuItems(prev => prev.map(item => item.id === id ? { ...item, available: !item.available } : item))
+  }
+
+  const deleteItem = (id) => {
+    setMenuItems(prev => prev.filter(item => item.id !== id))
+  }
+
+  const handleAddItem = () => {
+    if (!newItem.name || !newItem.price) return
+    const id = menuItems.length + 1
+    setMenuItems(prev => [...prev, {
+      ...newItem, id,
+      price: parseFloat(newItem.price),
+      image: newItem.image || '/images/menu/sambusa.jpg',
+    }])
+    setNewItem({ name: '', desc: '', price: '', category: 'Starter', image: '', available: true })
+    setShowAddModal(false)
+  }
+
+  const handleEditItem = () => {
+    if (!editItem.name || !editItem.price) return
+    setMenuItems(prev => prev.map(item =>
+      item.id === editItem.id ? { ...editItem, price: parseFloat(editItem.price) } : item
+    ))
+    setShowEditModal(false)
+    setEditItem(null)
+  }
+
+  const categoryColors = {
+    Starter: { bg: 'rgba(30,129,176,0.1)', color: '#1E81B0' },
+    Main: { bg: 'rgba(39,183,183,0.1)', color: '#27B7B7' },
+    Dessert: { bg: 'rgba(255,127,106,0.1)', color: '#FF7F6A' },
+    Drink: { bg: 'rgba(155,89,182,0.1)', color: '#9B59B6' },
+  }
+
+  const filtered = menuItems.filter(item => {
+    const matchesCategory = activeCategory === 'All' || item.category === activeCategory
+    const matchesSearch = item.name.toLowerCase().includes(search.toLowerCase())
+    return matchesCategory && matchesSearch
+  })
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', fontFamily: "'Segoe UI', sans-serif" }}>
