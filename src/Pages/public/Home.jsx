@@ -1,6 +1,9 @@
 import Navbar from '../../components/Navbar'
+import { useNavigate } from 'react-router-dom'
 
 function Home() {
+  const navigate = useNavigate()
+
   return (
     <div style={{ backgroundColor: '#FAF8F3', paddingTop: '70px' }}>
       <Navbar />
@@ -36,14 +39,28 @@ function Home() {
               fontWeight: '700',
               fontSize: '15px',
             }}>View Menu</a>
-            <a href="/contact" style={{
+          <button
+            onClick={() => {
+              // check if user is logged in — will be replaced with real auth later
+              const isLoggedIn = localStorage.getItem('token')
+              if (isLoggedIn) {
+                navigate('/reservations')
+              } else {
+                navigate('/login')
+              }
+            }}
+            style={{
               border: '2px solid #27B7B7',
               color: '#27B7B7',
               padding: '14px 32px',
               borderRadius: '8px',
               textDecoration: 'none',
               fontSize: '15px',
-            }}>Make a Reservation</a>
+              background: 'transparent',
+              cursor: 'pointer',
+            }}>
+            Make a Reservation
+          </button>
           </div>
         </div>
         <div style={{ flex: 1, minWidth: '280px' }}>
@@ -198,15 +215,23 @@ function Home() {
         <p style={{ color: '#FAF8F3', opacity: 0.85, fontSize: '16px', marginBottom: '36px' }}>
           Book your table today and experience the best of Ethiopian-Western fine dining
         </p>
-        <a href="/contact" style={{
-          backgroundColor: '#FF7F6A',
-          color: '#fff',
-          padding: '16px 40px',
-          borderRadius: '8px',
-          textDecoration: 'none',
-          fontWeight: '700',
-          fontSize: '16px',
-        }}>Reserve a Table</a>
+        <button
+          onClick={() => {
+            const isLoggedIn = localStorage.getItem('token')
+            navigate(isLoggedIn ? '/reservations' : '/login')
+          }}
+          style={{
+            backgroundColor: '#FF7F6A',
+            color: '#fff',
+            padding: '16px 40px',
+            borderRadius: '8px',
+            border: 'none',
+            fontWeight: '700',
+            fontSize: '16px',
+            cursor: 'pointer',
+          }}>
+          Reserve a Table
+        </button>alright comm
       </div>
 
       {/* Footer */}

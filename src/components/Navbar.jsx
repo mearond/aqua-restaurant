@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom'
 import './Navbar.css'
+import { useNavigate } from 'react-router-dom'
 
 function Navbar() {
+  const navigate = useNavigate()
+
   return (
     <nav className="navbar">
      <Link to="/" className="navbar-logo">
@@ -21,7 +24,15 @@ function Navbar() {
 
       <div className="navbar-buttons">
         <Link to="/login" className="btn-outline">Login</Link>
-        <Link to="/register" className="btn-fill">Reserve</Link>
+        <button
+          onClick={() => {
+            const isLoggedIn = localStorage.getItem('token')
+            navigate(isLoggedIn ? '/reservations' : '/login')
+          }}
+          className="btn-fill"
+          style={{ border: 'none', cursor: 'pointer' }}>
+          Reserve
+        </button>
       </div>
     </nav>
   )
