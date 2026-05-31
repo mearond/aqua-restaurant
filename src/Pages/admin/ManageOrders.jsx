@@ -308,21 +308,21 @@ function ManageOrders() {
       {/* ── Confirm Paid Modal ── */}
       {confirmPaid !== null && confirmOrder && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: '#dde1e4', borderRadius: '16px', padding: '40px 36px', width: '380px', boxShadow: '0 8px 40px rgba(0,0,0,0.2)', textAlign: 'center' }}>
+          <div style={{ background: '#ffffff', borderRadius: '16px', padding: '40px 36px', width: '380px', boxShadow: '0 8px 40px rgba(0,0,0,0.2)', textAlign: 'center' }}>
             <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: confirmOrder.paid ? 'rgba(255,127,106,0.1)' : 'rgba(39,183,183,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '26px' }}>
               {confirmOrder.paid ? '↩' : '✓'}
             </div>
             <p style={{ color: '#12344D', fontSize: '18px', fontWeight: '700', marginBottom: '8px' }}>
               {confirmOrder.paid ? 'Mark as Unpaid?' : 'Mark as Paid?'}
             </p>
-            <p style={{ color: '#888', fontSize: '13px', lineHeight: '1.7', marginBottom: '6px' }}>
+            <p style={{ color: '#4c4040', fontSize: '13px', lineHeight: '1.7', marginBottom: '6px' }}>
               Order <strong style={{ color: '#12344D' }}>#{confirmOrder.id}</strong> · Table <strong style={{ color: '#12344D' }}>{confirmOrder.table}</strong>
             </p>
-            <p style={{ color: '#888', fontSize: '13px', marginBottom: '32px' }}>
+            <p style={{ color: '#4c4040', fontSize: '13px', marginBottom: '32px' }}>
               Total: <strong style={{ color: '#12344D' }}>${confirmOrder.total}</strong>
             </p>
             <div style={{ display: 'flex', gap: '12px' }}>
-              <button onClick={() => setConfirmPaid(null)} style={{ flex: 1, padding: '12px', border: '0.5px solid #e0ddd8', background: 'none', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#888', fontWeight: '500' }}>Cancel</button>
+              <button onClick={() => setConfirmPaid(null)} style={{ flex: 1, padding: '12px', border: '0.5px solid #e2be7b', background: 'none', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#4c4040', fontWeight: '700' }}>Cancel</button>
               <button onClick={() => { togglePaid(confirmPaid); setConfirmPaid(null) }} style={{ flex: 1, padding: '12px', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', background: confirmOrder.paid ? '#FF7F6A' : '#27B7B7', color: '#fff' }}>
                 {confirmOrder.paid ? 'Mark Unpaid' : 'Confirm Paid'}
               </button>
