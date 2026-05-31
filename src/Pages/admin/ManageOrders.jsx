@@ -1,6 +1,23 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+// ── Defined OUTSIDE the component so React doesn't recreate them on every render ──
+
+const Icon = ({ symbol, color = 'rgba(255,255,255,0.4)', size = 15 }) => (
+  <span style={{ color, fontSize: size, lineHeight: 1, flexShrink: 0 }}>{symbol}</span>
+)
+
+const InputField = ({ label, type = 'text', placeholder, value, onChange }) => (
+  <div style={{ marginBottom: '16px' }}>
+    <p style={{ color: '#888', fontSize: '11px', letterSpacing: '1px', marginBottom: '6px' }}>{label}</p>
+    <input
+      type={type} placeholder={placeholder} value={value} onChange={onChange}
+      style={{ width: '100%', padding: '11px 14px', border: '0.5px solid #e0ddd8', borderRadius: '8px', fontSize: '13px', color: '#12344D', outline: 'none', boxSizing: 'border-box', background: '#FAF8F3' }}
+    />
+  </div>
+)
+
+// ── Main component ──
 function ManageOrders() {
   const navigate = useNavigate()
 
@@ -77,23 +94,6 @@ function ManageOrders() {
     'Completed': { bg: 'rgba(136,136,136,0.1)', color: '#888' },
   }
 
-  const Icon = ({ symbol, color = 'rgba(255,255,255,0.4)', size = 15 }) => (
-    <span style={{ color, fontSize: size, lineHeight: 1, flexShrink: 0 }}>{symbol}</span>
-  )
-
-  const InputField = ({ label, type = 'text', placeholder, value, onChange }) => (
-    <div style={{ marginBottom: '16px' }}>
-      <p style={{ color: '#888', fontSize: '11px', letterSpacing: '1px', marginBottom: '6px' }}>{label}</p>
-      <input
-        type={type} placeholder={placeholder} value={value} onChange={onChange}
-        style={{ width: '100%', padding: '11px 14px', border: '0.5px solid #e0ddd8', borderRadius: '8px', fontSize: '13px', color: '#12344D', outline: 'none', boxSizing: 'border-box', background: '#FAF8F3' }}
-        onFocus={e => e.target.style.borderColor = '#27B7B7'}
-        onBlur={e => e.target.style.borderColor = '#e0ddd8'}
-      />
-    </div>
-  )
-
-  // Get the order being confirmed
   const confirmOrder = orders.find(o => o.id === confirmPaid)
 
   return (
@@ -225,13 +225,9 @@ function ManageOrders() {
                   <p style={{ color: '#888', fontSize: '12px' }}>{o.table}</p>
                   <p style={{ color: '#888', fontSize: '12px' }}>{o.items}</p>
                   <p style={{ color: '#12344D', fontSize: '12px', fontWeight: '700' }}>${o.total}</p>
-
-                  {/* Status badge */}
                   <span style={{ background: sc.bg, color: sc.color, padding: '3px 10px', borderRadius: '20px', fontSize: '10px', fontWeight: '600', display: 'inline-block', width: 'fit-content' }}>
                     {o.status}
                   </span>
-
-                  {/* Paid badge — opens confirmation modal on click */}
                   <span
                     onClick={() => setConfirmPaid(o.id)}
                     style={{
@@ -242,28 +238,16 @@ function ManageOrders() {
                     }}>
                     {o.paid ? 'Paid ✓' : 'Unpaid'}
                   </span>
-
-                  {/* Action buttons */}
                   <div style={{ display: 'flex', gap: '6px' }}>
                     {isCompleted ? (
                       <button style={{ border: '0.5px solid #e0ddd8', background: 'none', color: '#888', padding: '5px 10px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>View</button>
                     ) : (
                       <>
-                        <button
-                          onClick={() => { setEditOrder({ ...o }); setShowEditOrderModal(true) }}
-                          style={{ border: '0.5px solid #e0ddd8', background: 'none', color: '#12344D', padding: '5px 10px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: '500' }}>
-                          Edit
-                        </button>
-                        <button
-                          onClick={() => progressOrder(o.id)}
-                          style={{ background: o.status === 'Pending' ? '#1E81B0' : '#27B7B7', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: '500' }}>
+                        <button onClick={() => { setEditOrder({ ...o }); setShowEditOrderModal(true) }} style={{ border: '0.5px solid #e0ddd8', background: 'none', color: '#12344D', padding: '5px 10px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: '500' }}>Edit</button>
+                        <button onClick={() => progressOrder(o.id)} style={{ background: o.status === 'Pending' ? '#1E81B0' : '#27B7B7', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: '500' }}>
                           {o.status === 'Pending' ? 'Progress' : 'Complete'}
                         </button>
-                        <button
-                          onClick={() => cancelOrder(o.id)}
-                          style={{ border: '0.5px solid rgba(255,127,106,0.4)', background: 'none', color: '#FF7F6A', padding: '5px 10px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>
-                          Cancel
-                        </button>
+                        <button onClick={() => cancelOrder(o.id)} style={{ border: '0.5px solid rgba(255,127,106,0.4)', background: 'none', color: '#FF7F6A', padding: '5px 10px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>Cancel</button>
                       </>
                     )}
                   </div>
@@ -325,41 +309,21 @@ function ManageOrders() {
       {confirmPaid !== null && confirmOrder && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
           <div style={{ background: '#dde1e4', borderRadius: '16px', padding: '40px 36px', width: '380px', boxShadow: '0 8px 40px rgba(0,0,0,0.2)', textAlign: 'center' }}>
-
-            {/* Icon circle */}
-            <div style={{
-              width: '64px', height: '64px', borderRadius: '50%',
-              background: confirmOrder.paid ? 'rgba(140, 188, 191, 0.1)' : 'rgba(39,183,183,0.1)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              margin: '0 auto 20px', fontSize: '26px',
-            }}>
+            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: confirmOrder.paid ? 'rgba(255,127,106,0.1)' : 'rgba(39,183,183,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '26px' }}>
               {confirmOrder.paid ? '↩' : '✓'}
             </div>
-
             <p style={{ color: '#12344D', fontSize: '18px', fontWeight: '700', marginBottom: '8px' }}>
               {confirmOrder.paid ? 'Mark as Unpaid?' : 'Mark as Paid?'}
             </p>
-            <p style={{ color: '#12344D', fontSize: '13px', lineHeight: '1.7', marginBottom: '6px' }}>
-              Order <strong style={{ color: '#888' }}>#{confirmOrder.id}</strong> · Table <strong style={{ color: '#888' }}>{confirmOrder.table}</strong>
+            <p style={{ color: '#888', fontSize: '13px', lineHeight: '1.7', marginBottom: '6px' }}>
+              Order <strong style={{ color: '#12344D' }}>#{confirmOrder.id}</strong> · Table <strong style={{ color: '#12344D' }}>{confirmOrder.table}</strong>
             </p>
-            <p style={{ color: '#12344D', fontSize: '13px', marginBottom: '32px' }}>
+            <p style={{ color: '#888', fontSize: '13px', marginBottom: '32px' }}>
               Total: <strong style={{ color: '#12344D' }}>${confirmOrder.total}</strong>
             </p>
-
             <div style={{ display: 'flex', gap: '12px' }}>
-              <button
-                onClick={() => setConfirmPaid(null)}
-                style={{ flex: 1, padding: '12px', border: '0.5px solid #bca98a', background: 'none', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#12344D', fontWeight: '500' }}>
-                Cancel
-              </button>
-              <button
-                onClick={() => { togglePaid(confirmPaid); setConfirmPaid(null) }}
-                style={{
-                  flex: 1, padding: '12px', border: 'none', borderRadius: '8px',
-                  fontSize: '13px', fontWeight: '600', cursor: 'pointer',
-                  background: confirmOrder.paid ? '#FF7F6A' : '#27B7B7',
-                  color: '#fff',
-                }}>
+              <button onClick={() => setConfirmPaid(null)} style={{ flex: 1, padding: '12px', border: '0.5px solid #e0ddd8', background: 'none', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#888', fontWeight: '500' }}>Cancel</button>
+              <button onClick={() => { togglePaid(confirmPaid); setConfirmPaid(null) }} style={{ flex: 1, padding: '12px', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', background: confirmOrder.paid ? '#FF7F6A' : '#27B7B7', color: '#fff' }}>
                 {confirmOrder.paid ? 'Mark Unpaid' : 'Confirm Paid'}
               </button>
             </div>
