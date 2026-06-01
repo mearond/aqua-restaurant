@@ -22,10 +22,11 @@ function AdminDashboard() {
   const [newTableId, setNewTableId] = useState('')
 
   const tableStyles = {
-    free: { bg: 'rgba(39,183,183,0.08)', border: 'rgba(39,183,183,0.3)', color: '#27B7B7', label: 'Free' },
-    occupied: { bg: 'rgba(255,127,106,0.08)', border: 'rgba(255,127,106,0.3)', color: '#FF7F6A', label: 'Occupied' },
-    reserved: { bg: 'rgba(155,89,182,0.08)', border: 'rgba(155,89,182,0.3)', color: '#9B59B6', label: 'Reserved' },
-  }
+  free: { bg: 'rgba(39,183,183,0.08)', border: 'rgba(39,183,183,0.3)', color: '#27B7B7', label: 'Free' },
+  occupied: { bg: 'rgba(255,127,106,0.08)', border: 'rgba(255,127,106,0.3)', color: '#FF7F6A', label: 'Occupied' },
+  reserved: { bg: 'rgba(155,89,182,0.08)', border: 'rgba(155,89,182,0.3)', color: '#9B59B6', label: 'Reserved' },
+  event: { bg: 'rgba(239, 229, 177, 0.3)', border: 'rgba(205, 195, 136, 0.3)', color: '#aeb951', label: 'Event' },
+}
 
   const reservations = [
     { id: 1, customer: 'Sarah M.', table: 'Table 3', time: '7:00 PM', guests: 2, status: 'Confirmed' },
@@ -204,7 +205,7 @@ function AdminDashboard() {
                 <p style={{ color: '#12344D', fontSize: '14px', fontWeight: '600' }}>Table Status — Now</p>
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                {[{ color: '#27B7B7', label: 'Free' }, { color: '#FF7F6A', label: 'Occupied' }, { color: '#9B59B6', label: 'Reserved' }].map(l => (
+                {[{ color: '#27B7B7', label: 'Free' }, { color: '#FF7F6A', label: 'Occupied' }, { color: '#9B59B6', label: 'Reserved' }, { color: '#aeb951', label: 'Event' }].map(l => (
                   <div key={l.label} style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                     <div style={{ width: '8px', height: '8px', borderRadius: '2px', background: l.color }} />
                     <span style={{ fontSize: '11px', color: '#888' }}>{l.label}</span>
@@ -246,7 +247,7 @@ function AdminDashboard() {
                           boxShadow: '0 4px 16px rgba(0,0,0,0.1)', overflow: 'hidden',
                           marginTop: '4px', minWidth: '110px',
                         }}>
-                        {['free', 'occupied', 'reserved'].map(status => (
+                        {['free', 'occupied', 'reserved', 'event'].map(status => (
                           <div
                             key={status}
                             onClick={() => {
