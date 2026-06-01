@@ -159,7 +159,10 @@ function About() {
             </div>
           ))}
           <button
-            onClick={() => navigate('/menu')}
+            onClick={() => {
+              const isLoggedIn = localStorage.getItem('token')
+              navigate(isLoggedIn ? '/reservations' : '/login')
+            }}
             style={{
               marginTop: '28px',
               backgroundColor: '#FF7F6A',
@@ -171,7 +174,7 @@ function About() {
               fontWeight: '600',
               cursor: 'pointer',
             }}>
-            View Menu
+            Make a Reservation
           </button>
         </div>
       </div>

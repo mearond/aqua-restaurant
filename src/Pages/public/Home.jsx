@@ -231,7 +231,7 @@ function Home() {
             cursor: 'pointer',
           }}>
           Reserve a Table
-        </button>alright comm
+        </button>
       </div>
 
       {/* Footer */}

@@ -234,7 +234,10 @@ function Contact() {
             Book your table today and experience the best of Ethiopian-Western fine dining
           </p>
           <button
-            onClick={handleSubmit}
+            onClick={() => {
+              const isLoggedIn = localStorage.getItem('token')
+              navigate(isLoggedIn ? '/reservations' : '/login')
+            }}
             style={{
               backgroundColor: '#FF7F6A',
               color: '#fff',

@@ -130,7 +130,7 @@ function Dashboard() {
             <p style={{ color: '#888', fontSize: '12px', marginTop: '2px' }}>Here's everything happening at AQUA</p>
           </div>
           <button
-            onClick={() => navigate('/contact')}
+            onClick={() => navigate('/reservations')}
             style={{
               background: '#12344D',
               color: '#FAF8F3',
@@ -141,7 +141,7 @@ function Dashboard() {
               fontWeight: '600',
               cursor: 'pointer',
             }}>
-            + New Reservation
+            View Reservations
           </button>
         </div>
 
