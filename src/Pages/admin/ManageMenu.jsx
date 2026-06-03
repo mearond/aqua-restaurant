@@ -353,7 +353,7 @@ function ManageMenu() {
             <div style={{ display: 'flex', gap: '12px' }}>
               <button
                 onClick={() => setConfirmToggle(null)}
-                style={{ flex: 1, padding: '12px', border: '0.5px solid #e0ddd8', background: 'none', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#888', fontWeight: '500' }}>
+                style={{ flex: 1, padding: '12px', border: '0.5px solid #d6b333', background: 'none', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#888888', fontWeight: '500' }}>
                 Cancel
               </button>
               <button

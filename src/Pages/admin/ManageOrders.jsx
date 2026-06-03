@@ -231,26 +231,32 @@ function ManageOrders() {
                   <span
                     onClick={() => setConfirmPaid(o.id)}
                     style={{
-                      background: o.paid ? 'rgba(39,183,183,0.1)' : 'rgba(136,136,136,0.1)',
+                      background: o.paid ? 'rgba(39, 183, 82, 0.1)' : 'rgba(200, 69, 69, 0.1)',
                       color: o.paid ? '#27B7B7' : '#888',
                       padding: '4px 10px', borderRadius: '20px', fontSize: '10px',
                       fontWeight: '600', cursor: 'pointer', display: 'inline-block',
                     }}>
                     {o.paid ? 'Paid ✓' : 'Unpaid'}
                   </span>
+                {isCompleted ? (
                   <div style={{ display: 'flex', gap: '6px' }}>
-                    {isCompleted ? (
-                      <button style={{ border: '0.5px solid #e0ddd8', background: 'none', color: '#888', padding: '5px 10px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>View</button>
-                    ) : (
-                      <>
-                        <button onClick={() => { setEditOrder({ ...o }); setShowEditOrderModal(true) }} style={{ border: '0.5px solid #e0ddd8', background: 'none', color: '#12344D', padding: '5px 10px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: '500' }}>Edit</button>
-                        <button onClick={() => progressOrder(o.id)} style={{ background: o.status === 'Pending' ? '#1E81B0' : '#27B7B7', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: '500' }}>
-                          {o.status === 'Pending' ? 'Progress' : 'Complete'}
-                        </button>
-                        <button onClick={() => cancelOrder(o.id)} style={{ border: '0.5px solid rgba(255,127,106,0.4)', background: 'none', color: '#FF7F6A', padding: '5px 10px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>Cancel</button>
-                      </>
-                    )}
+                    <button
+                      onClick={() => setOrders(prev => prev.map(order =>
+                        order.id === o.id ? { ...order, status: 'In Progress' } : order
+                      ))}
+                      style={{ border: '0.5px solid rgba(39,183,183,0.4)', background: 'none', color: '#27B7B7', padding: '5px 10px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>
+                      ↩ Revert
+                    </button>
                   </div>
+                ) : (
+                  <>
+                    <button onClick={() => { setEditOrder({ ...o }); setShowEditOrderModal(true) }} style={{ border: '0.5px solid #e0ddd8', background: 'none', color: '#12344D', padding: '5px 8px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: '500' }}>Edit</button>
+                    <button onClick={() => progressOrder(o.id)} style={{ background: o.status === 'Pending' ? '#1E81B0' : '#27B7B7', color: '#fff', border: 'none', padding: '5px 8px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: '500' }}>
+                      {o.status === 'Pending' ? 'Progress' : 'Complete'}
+                    </button>
+                    <button onClick={() => cancelOrder(o.id)} style={{ border: '0.5px solid rgba(255,127,106,0.4)', background: 'none', color: '#FF7F6A', padding: '5px 8px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>Cancel</button>
+                  </>
+                )}
                 </div>
               )
             })}
