@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-// ── Defined OUTSIDE the component so React doesn't recreate them on every render ──
-
 const Icon = ({ symbol, color = 'rgba(255,255,255,0.4)', size = 15 }) => (
   <span style={{ color, fontSize: size, lineHeight: 1, flexShrink: 0 }}>{symbol}</span>
 )
@@ -17,7 +15,6 @@ const InputField = ({ label, type = 'text', placeholder, value, onChange }) => (
   </div>
 )
 
-// ── Main component ──
 function ManageOrders() {
   const navigate = useNavigate()
 
@@ -55,16 +52,16 @@ function ManageOrders() {
     setOrders(prev => prev.filter(o => o.id !== id))
   }
 
+  const revertOrder = (id) => {
+    setOrders(prev => prev.map(o => o.id === id ? { ...o, status: 'In Progress' } : o))
+  }
+
   const handleNewOrder = () => {
     if (!newOrder.table || !newOrder.items || !newOrder.total) return
     const id = Math.max(...orders.map(o => o.id)) + 1
     setOrders(prev => [...prev, {
-      id,
-      table: newOrder.table,
-      items: newOrder.items,
-      total: parseFloat(newOrder.total),
-      status: 'Pending',
-      paid: false,
+      id, table: newOrder.table, items: newOrder.items,
+      total: parseFloat(newOrder.total), status: 'Pending', paid: false,
     }])
     setNewOrder({ table: '', items: '', total: '' })
     setShowNewOrderModal(false)
@@ -95,6 +92,9 @@ function ManageOrders() {
   }
 
   const confirmOrder = orders.find(o => o.id === confirmPaid)
+
+  // Shared grid columns
+  const COLS = '0.5fr 0.5fr 2fr 0.8fr 1fr 0.8fr 1fr'
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', fontFamily: "'Segoe UI', sans-serif" }}>
@@ -203,20 +203,23 @@ function ManageOrders() {
 
           {/* Orders table */}
           <div style={{ background: '#fff', borderRadius: '16px', border: '0.5px solid #e0ddd8', overflow: 'hidden' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '0.5fr 0.5fr 2fr 0.7fr 1fr 0.7fr 1.3fr', gap: '16px', padding: '12px 20px', background: '#FAF8F3', borderBottom: '0.5px solid #e0ddd8', alignItems: 'center' }}>
+
+            {/* Header */}
+            <div style={{ display: 'grid', gridTemplateColumns: COLS, gap: '12px', padding: '12px 20px', background: '#FAF8F3', borderBottom: '0.5px solid #e0ddd8', alignItems: 'center' }}>
               {['ORDER#', 'TABLE', 'ITEMS', 'TOTAL', 'STATUS', 'PAID', 'ACTIONS'].map(h => (
                 <p key={h} style={{ color: '#888', fontSize: '10px', fontWeight: '600', letterSpacing: '1px' }}>{h}</p>
               ))}
             </div>
 
+            {/* Rows */}
             {filtered.map((o, i) => {
               const sc = statusColors[o.status]
               const isCompleted = o.status === 'Completed'
               return (
                 <div key={o.id} style={{
                   display: 'grid',
-                  gridTemplateColumns: '0.5fr 0.5fr 2fr 0.7fr 1fr 0.7fr 1.3fr',
-                  gap: '16px', padding: '14px 20px',
+                  gridTemplateColumns: COLS,
+                  gap: '12px', padding: '14px 20px',
                   borderBottom: i < filtered.length - 1 ? '0.5px solid #f5f3f0' : 'none',
                   alignItems: 'center',
                   opacity: isCompleted ? 0.55 : 1,
@@ -225,38 +228,50 @@ function ManageOrders() {
                   <p style={{ color: '#888', fontSize: '12px' }}>{o.table}</p>
                   <p style={{ color: '#888', fontSize: '12px' }}>{o.items}</p>
                   <p style={{ color: '#12344D', fontSize: '12px', fontWeight: '700' }}>${o.total}</p>
-                  <span style={{ background: sc.bg, color: sc.color, padding: '3px 10px', borderRadius: '20px', fontSize: '10px', fontWeight: '600', display: 'inline-block', width: 'fit-content' }}>
+
+                  {/* Status */}
+                  <span style={{ background: sc.bg, color: sc.color, padding: '3px 8px', borderRadius: '20px', fontSize: '10px', fontWeight: '600', display: 'inline-block', width: 'fit-content' }}>
                     {o.status}
                   </span>
-                  <span
-                    onClick={() => setConfirmPaid(o.id)}
-                    style={{
-                      background: o.paid ? 'rgba(39, 183, 82, 0.1)' : 'rgba(200, 69, 69, 0.1)',
-                      color: o.paid ? '#27B7B7' : '#888',
-                      padding: '4px 10px', borderRadius: '20px', fontSize: '10px',
-                      fontWeight: '600', cursor: 'pointer', display: 'inline-block',
-                    }}>
+
+                  {/* Paid */}
+                  <span onClick={() => setConfirmPaid(o.id)} style={{
+                    background: o.paid ? 'rgba(39,183,183,0.1)' : 'rgba(136,136,136,0.1)',
+                    color: o.paid ? '#27B7B7' : '#888',
+                    padding: '3px 8px', borderRadius: '20px', fontSize: '10px',
+                    fontWeight: '600', cursor: 'pointer', display: 'inline-block', width: 'fit-content',
+                  }}>
                     {o.paid ? 'Paid ✓' : 'Unpaid'}
                   </span>
-                {isCompleted ? (
-                  <div style={{ display: 'flex', gap: '6px' }}>
-                    <button
-                      onClick={() => setOrders(prev => prev.map(order =>
-                        order.id === o.id ? { ...order, status: 'In Progress' } : order
-                      ))}
-                      style={{ border: '0.5px solid rgba(39,183,183,0.4)', background: 'none', color: '#27B7B7', padding: '5px 10px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>
-                      ↩ Revert
-                    </button>
+
+                  {/* Actions — all inline */}
+                  <div style={{ display: 'flex', gap: '4px', alignItems: 'center', flexWrap: 'nowrap' }}>
+                    {isCompleted ? (
+                      <button
+                        onClick={() => revertOrder(o.id)}
+                        style={{ border: '0.5px solid rgba(39,183,183,0.4)', background: 'none', color: '#27B7B7', padding: '4px 8px', borderRadius: '6px', fontSize: '10px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                        ↩ Revert
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => { setEditOrder({ ...o }); setShowEditOrderModal(true) }}
+                          style={{ border: '0.5px solid #e0ddd8', background: 'none', color: '#12344D', padding: '4px 8px', borderRadius: '6px', fontSize: '10px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => progressOrder(o.id)}
+                          style={{ background: o.status === 'Pending' ? '#1E81B0' : '#27B7B7', color: '#fff', border: 'none', padding: '4px 8px', borderRadius: '6px', fontSize: '10px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                          {o.status === 'Pending' ? 'Progress' : 'Complete'}
+                        </button>
+                        <button
+                          onClick={() => cancelOrder(o.id)}
+                          style={{ border: '0.5px solid rgba(255,127,106,0.4)', background: 'none', color: '#FF7F6A', padding: '4px 8px', borderRadius: '6px', fontSize: '10px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                          Cancel
+                        </button>
+                      </>
+                    )}
                   </div>
-                ) : (
-                  <>
-                    <button onClick={() => { setEditOrder({ ...o }); setShowEditOrderModal(true) }} style={{ border: '0.5px solid #e0ddd8', background: 'none', color: '#12344D', padding: '5px 8px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: '500' }}>Edit</button>
-                    <button onClick={() => progressOrder(o.id)} style={{ background: o.status === 'Pending' ? '#1E81B0' : '#27B7B7', color: '#fff', border: 'none', padding: '5px 8px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer', fontWeight: '500' }}>
-                      {o.status === 'Pending' ? 'Progress' : 'Complete'}
-                    </button>
-                    <button onClick={() => cancelOrder(o.id)} style={{ border: '0.5px solid rgba(255,127,106,0.4)', background: 'none', color: '#FF7F6A', padding: '5px 8px', borderRadius: '6px', fontSize: '11px', cursor: 'pointer' }}>Cancel</button>
-                  </>
-                )}
                 </div>
               )
             })}
@@ -314,21 +329,21 @@ function ManageOrders() {
       {/* ── Confirm Paid Modal ── */}
       {confirmPaid !== null && confirmOrder && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-          <div style={{ background: '#ffffff', borderRadius: '16px', padding: '40px 36px', width: '380px', boxShadow: '0 8px 40px rgba(0,0,0,0.2)', textAlign: 'center' }}>
+          <div style={{ background: '#fff', borderRadius: '16px', padding: '40px 36px', width: '380px', boxShadow: '0 8px 40px rgba(0,0,0,0.2)', textAlign: 'center' }}>
             <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: confirmOrder.paid ? 'rgba(255,127,106,0.1)' : 'rgba(39,183,183,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '26px' }}>
               {confirmOrder.paid ? '↩' : '✓'}
             </div>
             <p style={{ color: '#12344D', fontSize: '18px', fontWeight: '700', marginBottom: '8px' }}>
               {confirmOrder.paid ? 'Mark as Unpaid?' : 'Mark as Paid?'}
             </p>
-            <p style={{ color: '#4c4040', fontSize: '13px', lineHeight: '1.7', marginBottom: '6px' }}>
+            <p style={{ color: '#888', fontSize: '13px', lineHeight: '1.7', marginBottom: '6px' }}>
               Order <strong style={{ color: '#12344D' }}>#{confirmOrder.id}</strong> · Table <strong style={{ color: '#12344D' }}>{confirmOrder.table}</strong>
             </p>
-            <p style={{ color: '#4c4040', fontSize: '13px', marginBottom: '32px' }}>
+            <p style={{ color: '#888', fontSize: '13px', marginBottom: '32px' }}>
               Total: <strong style={{ color: '#12344D' }}>${confirmOrder.total}</strong>
             </p>
             <div style={{ display: 'flex', gap: '12px' }}>
-              <button onClick={() => setConfirmPaid(null)} style={{ flex: 1, padding: '12px', border: '0.5px solid #e2be7b', background: 'none', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#4c4040', fontWeight: '700' }}>Cancel</button>
+              <button onClick={() => setConfirmPaid(null)} style={{ flex: 1, padding: '12px', border: '0.5px solid #e0ddd8', background: 'none', borderRadius: '8px', fontSize: '13px', cursor: 'pointer', color: '#888', fontWeight: '500' }}>Cancel</button>
               <button onClick={() => { togglePaid(confirmPaid); setConfirmPaid(null) }} style={{ flex: 1, padding: '12px', border: 'none', borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', background: confirmOrder.paid ? '#FF7F6A' : '#27B7B7', color: '#fff' }}>
                 {confirmOrder.paid ? 'Mark Unpaid' : 'Confirm Paid'}
               </button>
